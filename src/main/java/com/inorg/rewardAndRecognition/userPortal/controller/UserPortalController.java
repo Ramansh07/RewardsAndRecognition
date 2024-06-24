@@ -51,6 +51,12 @@ public class UserPortalController {
         List<RewardDTO> rewards = userPortalService.getAllRewards();
         return ResponseEntity.ok().body(rewards);
     }
+    //getActiveRewardById
+    @GetMapping("/reward/{rewardId}")
+    public ResponseEntity<RewardDTO> getActiveRewardById(@PathVariable int rewardId) throws Exception {
+        RewardDTO reward = userPortalService.getActiveRewardById(rewardId);
+        return ResponseEntity.ok().body(reward);
+    }
 
     @PostMapping("/nominate")
     public ResponseEntity<String> Nominate(@RequestBody NominateDTO nominateDTO) throws Exception{
