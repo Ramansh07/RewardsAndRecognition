@@ -6,6 +6,6 @@ import com.inorg.rewardAndRecognition.userPortal.entity.RewardsEntity;
 import java.util.List;
 
 public interface CustomRewardRepository {
-    List<RewardsEntity> findAllActiveRewards();
-    RewardsEntity findActiveRewardById(int rewardId);
+    List<RewardsEntity> findAllActiveRewards() throws Exception;
+    RewardsEntity findActiveRewardById(int rewardId) throws Exception;
 }

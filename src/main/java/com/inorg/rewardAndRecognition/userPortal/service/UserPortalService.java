@@ -32,6 +32,7 @@ public class UserPortalService {
     }
 
     public List<EmployeeDTO> FindAllActiveEmployees() throws Exception{
+        System.out.println("\n\n inside FindAllActiveEmployees \n\n");
 
         List<EmployeeEntity> listEmployeeEntity = employeeRepository.findActiveEmployees();
         if(!listEmployeeEntity.isEmpty()){
@@ -49,6 +50,7 @@ public class UserPortalService {
 
                 resp.add(employeeDTO);
             }
+            System.out.println("\n\n exiting FindAllActiveEmployees \n\n");
             return resp;
         }
         else{
@@ -94,11 +96,14 @@ public class UserPortalService {
         }
     }
     public EmployeeDTO FindActiveEmployeeById(String id) throws Exception{
+        System.out.println("\n\n inside getEmployee by id service layer \n\n");
+
         if(id == null || id.isEmpty()){
             throw new InvalidRequest("Id of employee cannot be null or blank");
         }
        EmployeeEntity employeeEntity = employeeRepository.findActiveEmployeeById(id);
        if(employeeEntity!=null) {
+           System.out.println("\n\n inside   if(employeeEntity!=null) \n\n");
            EmployeeDTO employeeDTO = EmployeeDTO.builder()
                    .empId(employeeEntity.getEmpId())
                    .email(employeeEntity.getEmail())
@@ -110,8 +115,10 @@ public class UserPortalService {
                    .build();
            return employeeDTO;
 
+
        }
        else{
+           System.out.println("\n\n inside else \n\n");
            throw new ResourceNotFoundException("No Employee is present with the id" + id);
        }
 
@@ -121,7 +128,7 @@ public class UserPortalService {
             throw new InvalidRequest("Id of employee cannot be null or blank");
         }
         EmployeeDTO employeeDTO = FindActiveEmployeeById(id);
-        return employeeRepository.postDescription(id, descriptionDTO.getDescription());
+        return employeeRepository.updateDescription(id, descriptionDTO.getDescription());
 
     }
     public Boolean giveReward(NominateDTO nominateDTO) throws Exception {

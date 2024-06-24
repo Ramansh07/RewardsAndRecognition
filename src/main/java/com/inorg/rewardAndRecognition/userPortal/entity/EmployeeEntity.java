@@ -1,7 +1,9 @@
 package com.inorg.rewardAndRecognition.userPortal.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -12,13 +14,15 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "Employee")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class EmployeeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "EmployeeId", length = 50, nullable = false, unique = true)
+    @Column(name = "empid", length = 50, nullable = false, unique = true)
     private String empId;
 
     @NonNull

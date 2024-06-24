@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+
+
 @RestController
 @RequestMapping(path = "/user-portal")
 public class UserPortalController {
@@ -26,6 +28,7 @@ public class UserPortalController {
 
     @GetMapping("/employees")
     public ResponseEntity<List<EmployeeDTO>> getEmployees() throws Exception {
+        System.out.println("\n\n inside getEmployees \n\n");
         List<EmployeeDTO> employees = userPortalService.FindAllActiveEmployees();
         return ResponseEntity.ok().body(employees);
     }
@@ -35,8 +38,10 @@ public class UserPortalController {
         EmployeeDTO employee = userPortalService.FindActiveEmployeeById(employeeId);
         return ResponseEntity.ok().body(employee);
     }
-    @PostMapping(path = "/employee/{employeeID}/post-description")
+    @PostMapping(path = "/employee/{employeeId}/post-description")
     public ResponseEntity<String> postDescription(@PathVariable String employeeId, @RequestBody SetDescriptionDTO descriptionDTO)throws Exception{
+        System.out.println("\n\n inside postDescription \n\n");
+        System.out.println("\n\n employeeId\n\n" +"   "+ employeeId +"   "+descriptionDTO.getDescription());
         boolean success = userPortalService.postDescription(employeeId, descriptionDTO);
         if(success)return new ResponseEntity<>("setting description for "+ employeeId + "successful", HttpStatus.CREATED);
         else return new ResponseEntity<>("failed in setting description for "+ employeeId , HttpStatus.NOT_IMPLEMENTED);
