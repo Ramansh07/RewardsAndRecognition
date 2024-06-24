@@ -40,8 +40,6 @@ public class UserPortalController {
     }
     @PostMapping(path = "/employee/{employeeId}/post-description")
     public ResponseEntity<String> postDescription(@PathVariable String employeeId, @RequestBody SetDescriptionDTO descriptionDTO)throws Exception{
-        System.out.println("\n\n inside postDescription \n\n");
-        System.out.println("\n\n employeeId\n\n" +"   "+ employeeId +"   "+descriptionDTO.getDescription());
         boolean success = userPortalService.postDescription(employeeId, descriptionDTO);
         if(success)return new ResponseEntity<>("setting description for "+ employeeId + "successful", HttpStatus.CREATED);
         else return new ResponseEntity<>("failed in setting description for "+ employeeId , HttpStatus.NOT_IMPLEMENTED);
@@ -60,6 +58,8 @@ public class UserPortalController {
 
     @PostMapping("/nominate")
     public ResponseEntity<String> Nominate(@RequestBody NominateDTO nominateDTO) throws Exception{
+        System.out.println("\n\n inside nominate \n\n");
+        System.out.println("\n\n  nominatedto :  \n\n" + nominateDTO.getNominatorEmpId());
         boolean success = userPortalService.giveReward(nominateDTO);
         if(success)return new ResponseEntity<>("Nomination Successful", HttpStatus.CREATED);
         else return new ResponseEntity<>("Nomination not Successful ", HttpStatus.NOT_IMPLEMENTED);
