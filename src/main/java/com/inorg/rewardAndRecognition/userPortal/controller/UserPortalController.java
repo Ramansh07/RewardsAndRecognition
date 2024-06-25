@@ -58,8 +58,6 @@ public class UserPortalController {
 
     @PostMapping("/nominate")
     public ResponseEntity<String> Nominate(@RequestBody NominateDTO nominateDTO) throws Exception{
-        System.out.println("\n\n inside nominate \n\n");
-        System.out.println("\n\n  nominatedto :  \n\n" + nominateDTO.getNominatorEmpId());
         boolean success = userPortalService.giveReward(nominateDTO);
         if(success)return new ResponseEntity<>("Nomination Successful", HttpStatus.CREATED);
         else return new ResponseEntity<>("Nomination not Successful ", HttpStatus.NOT_IMPLEMENTED);

@@ -8,6 +8,8 @@ import lombok.NonNull;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +20,7 @@ public class NominateDTO {
 
     @NonNull
     @JsonProperty("NomineeID")
-    private String nomineeEmpId;
+    private List<String> nomineeEmpIds;
 
     @NotNull
     @JsonProperty("RewardID")

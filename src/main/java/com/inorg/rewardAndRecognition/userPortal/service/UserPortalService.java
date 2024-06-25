@@ -133,14 +133,16 @@ public class UserPortalService {
     }
     public Boolean giveReward(NominateDTO nominateDTO) throws Exception {
         String nominatorId = nominateDTO.getNominatorEmpId();
-        String nomineeId = nominateDTO.getNomineeEmpId();
+        List<String> nomineeIds = nominateDTO.getNomineeEmpIds();
         Integer rewardID = nominateDTO.getRewardId();
         String justification = nominateDTO.getJustification();
         EmployeeDTO nominatorDto = FindActiveEmployeeById(nominatorId);
-        EmployeeDTO nomineeDto  = FindActiveEmployeeById(nomineeId);
+        for (String nomineeId : nomineeIds) {
+            EmployeeDTO nomineeDto = FindActiveEmployeeById(nomineeId);
+        }
         RewardDTO rewardDto = getActiveRewardById(rewardID);
         if(nominatorDto.getRole()>=rewardDto.getRewardLevel()){
-            return nominateRepository.giveReward(nominatorId,nomineeId , rewardID, justification);
+            return nominateRepository.giveReward(nominatorId,nomineeIds,rewardID, justification);
 
         }
         else{
