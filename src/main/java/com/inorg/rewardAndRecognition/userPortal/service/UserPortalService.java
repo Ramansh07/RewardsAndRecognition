@@ -123,6 +123,34 @@ public class UserPortalService {
        }
 
     }
+    public EmployeeDTO FindActiveEmployeeByEmail(String email) throws Exception{
+
+
+        if(email == null || email.isEmpty()){
+            throw new InvalidRequest("email of employee cannot be null or blank");
+        }
+        EmployeeEntity employeeEntity = employeeRepository.findActiveEmployeeByEmail(email);
+        if(employeeEntity!=null) {
+            System.out.println("\n\n inside   if(employeeEntity!=null) \n\n");
+            EmployeeDTO employeeDTO = EmployeeDTO.builder()
+                    .empId(employeeEntity.getEmpId())
+                    .email(employeeEntity.getEmail())
+                    .userName(employeeEntity.getUserName())
+                    .mobileNumber(employeeEntity.getPhoneNumber())
+                    .description(employeeEntity.getDescription())
+                    .points(employeeEntity.getPoints())
+                    .role(employeeEntity.getRole())
+                    .build();
+            return employeeDTO;
+
+
+        }
+        else{
+            System.out.println("\n\n inside else \n\n");
+            throw new ResourceNotFoundException("No Employee is present with the id" + email);
+        }
+
+    }
     public boolean postDescription(String id, SetDescriptionDTO descriptionDTO) throws Exception{
         if(id == null || id.isEmpty()){
             throw new InvalidRequest("Id of employee cannot be null or blank");

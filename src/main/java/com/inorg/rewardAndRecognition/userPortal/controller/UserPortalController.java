@@ -38,6 +38,11 @@ public class UserPortalController {
         EmployeeDTO employee = userPortalService.FindActiveEmployeeById(employeeId);
         return ResponseEntity.ok().body(employee);
     }
+    @GetMapping("/employeeByEmail/{employeeEmail}")
+    public ResponseEntity<EmployeeDTO> getEmployeeByEmail(@PathVariable String employeeEmail) throws Exception {
+        EmployeeDTO employee = userPortalService.FindActiveEmployeeByEmail(employeeEmail);
+        return ResponseEntity.ok().body(employee);
+    }
     @PostMapping(path = "/employee/{employeeId}/post-description")
     public ResponseEntity<String> postDescription(@PathVariable String employeeId, @RequestBody SetDescriptionDTO descriptionDTO)throws Exception{
         boolean success = userPortalService.postDescription(employeeId, descriptionDTO);
