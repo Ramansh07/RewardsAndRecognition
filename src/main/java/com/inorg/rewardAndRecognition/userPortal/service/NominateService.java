@@ -1,6 +1,5 @@
 package com.inorg.rewardAndRecognition.userPortal.service;
 import com.inorg.rewardAndRecognition.userPortal.Utility.NominationHelper;
-import com.inorg.rewardAndRecognition.userPortal.Utility.NomineeHelper;
 import com.inorg.rewardAndRecognition.userPortal.dto.*;
 import com.inorg.rewardAndRecognition.userPortal.exceptions.NoAuthorisationException;
 import com.inorg.rewardAndRecognition.userPortal.repository.NominateRepository;
