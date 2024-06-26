@@ -12,12 +12,9 @@ public class CustomEmployeeRepositoryImpl implements CustomEmployeeRepository{
     @PersistenceContext
     private EntityManager entityManager;
 
-
     public List<EmployeeEntity> findActiveEmployees(){
-        System.out.println("\n\n inside findActiveEmployees \n\n");
         String queryText = "SELECT e FROM EmployeeEntity e WHERE e.isActive = true AND e.isDeleted = false";
         TypedQuery<EmployeeEntity> query = entityManager.createQuery(queryText, EmployeeEntity.class);
-        System.out.println("\n\n exiting findActiveEmployees \n\n");
         return query.getResultList();
 
     }
@@ -25,9 +22,7 @@ public class CustomEmployeeRepositoryImpl implements CustomEmployeeRepository{
     public EmployeeEntity findActiveEmployeeById(String employeeId) throws Exception{
         String queryText = "SELECT e FROM EmployeeEntity e WHERE e.empId = :employeeId AND e.isActive = true AND e.isDeleted = false";
         TypedQuery<EmployeeEntity> query = entityManager.createQuery(queryText, EmployeeEntity.class);
-        System.out.println("\n\n inside  findActiveEmployeeById repository \n\n");
         query.setParameter("employeeId", employeeId);
-        System.out.println("\n\n executed  findActiveEmployeeById repository \n\n");
         try {
             EmployeeEntity resp = query.getSingleResult();
             return resp;
