@@ -1,12 +1,8 @@
 package com.inorg.rewardAndRecognition.userPortal.dto;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -14,18 +10,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NominateDTO {
-    @NotNull
-    @JsonProperty("NominatorID")
-    private String nominatorEmpId;
 
-    @NonNull
-    @JsonProperty("NomineeID")
-    private List<String> nomineeEmpIds;
+    @NotNull(message = "Nominator is mandatory")
+    @JsonProperty("nominatorDetails")
+    private NominatorDTO nominator;
 
-    @NotNull
-    @JsonProperty("RewardID")
-    private Integer rewardId;
-
-    @JsonProperty("Justification")
-    private String justification;
+    @JsonProperty("rewardDetails")
+    private List<NominationRewardDTO> rewards;
 }

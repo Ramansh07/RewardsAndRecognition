@@ -1,4 +1,5 @@
 package com.inorg.rewardAndRecognition.userPortal.repository;
+import com.inorg.rewardAndRecognition.userPortal.Utility.NominationHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
@@ -13,7 +14,7 @@ import java.util.List;
 public class NominateRepository {
     private final DataSource dataSource;
 
-    public Boolean giveReward(String nominatorId, List<String> nomineeIds, int rewardId, String justification) throws Exception{
+    public Boolean giveReward(String nominatorId, List<NominationHelper>nominations) throws Exception{
         String sql = "INSERT INTO nominations (nomineeid, nominatorid, rewardid, justification) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = dataSource.getConnection()) {
@@ -21,11 +22,11 @@ public class NominateRepository {
             conn.setAutoCommit(false);
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                for (String nomineeId : nomineeIds) {
-                    pstmt.setString(1, nomineeId);
+                for (NominationHelper nomination : nominations) {
+                    pstmt.setString(1, nomination.getId());
                     pstmt.setString(2, nominatorId);
-                    pstmt.setInt(3, rewardId);
-                    pstmt.setString(4, justification);
+                    pstmt.setInt(3, nomination.getRewardId());
+                    pstmt.setString(4, nomination.getJustification());
                     pstmt.addBatch();
                 }
                 pstmt.executeBatch();

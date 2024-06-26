@@ -1,11 +1,13 @@
 package com.inorg.rewardAndRecognition.userPortal.service;
-import com.inorg.rewardAndRecognition.userPortal.dto.EmployeeDTO;
-import com.inorg.rewardAndRecognition.userPortal.dto.NominateDTO;
-import com.inorg.rewardAndRecognition.userPortal.dto.RewardDTO;
+import com.inorg.rewardAndRecognition.userPortal.Utility.NominationHelper;
+import com.inorg.rewardAndRecognition.userPortal.Utility.NomineeHelper;
+import com.inorg.rewardAndRecognition.userPortal.dto.*;
 import com.inorg.rewardAndRecognition.userPortal.exceptions.NoAuthorisationException;
 import com.inorg.rewardAndRecognition.userPortal.repository.NominateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,23 +24,27 @@ public class NominateService {
 
     }
     public Boolean giveReward(NominateDTO nominateDTO) throws Exception {
-        String nominatorId = nominateDTO.getNominatorEmpId();
-        List<String> nomineeIds = nominateDTO.getNomineeEmpIds();
-        Integer rewardID = nominateDTO.getRewardId();
-        String justification = nominateDTO.getJustification();
-        EmployeeDTO nominatorDto = userPortalService.FindActiveEmployeeById(nominatorId);
-        for (String nomineeId : nomineeIds) {
-            EmployeeDTO nomineeDto = userPortalService.FindActiveEmployeeById(nomineeId);
-        }
-        RewardDTO rewardDto = rewardsService.getActiveRewardById(rewardID);
+        String nominatorId = nominateDTO.getNominator().getId();
+        EmployeeDTO nominatorCheck = userPortalService.FindActiveEmployeeById(nominatorId);
+        List<NominationHelper> nominations = new ArrayList<>();
+        for(NominationRewardDTO reward: nominateDTO.getRewards()){
+            Integer rewardID = reward.getId();
+            RewardDTO rewardCheck = rewardsService.getActiveRewardById(rewardID);
+            for(NomineeDTO nominee: reward.getNominees()){
+                EmployeeDTO nomineeCheck = userPortalService.FindActiveEmployeeById(nominee.getId());
+                String justification = "";
+                if(!reward.getTeamJustification().isEmpty())justification = reward.getTeamJustification();
+                if(!nominee.getInlineJustification().isEmpty())justification = nominee.getInlineJustification();
+                if(nominatorCheck.getRole()>=rewardCheck.getRewardLevel()){
+                    nominations.add(new NominationHelper(nominee.getId(), justification, rewardID));
+                }
+                else{
+                    throw new NoAuthorisationException("You are not authorised to give this reward");
+                }
 
-        if(nominatorDto.getRole()>=rewardDto.getRewardLevel()){
-            return nominateRepository.giveReward(nominatorId,nomineeIds,rewardID, justification);
+            }
         }
-        else{
-            throw new NoAuthorisationException("You are not authorised to give this reward");
-        }
-
+        return nominateRepository.giveReward(nominatorId,nominations);
     }
 
 }
