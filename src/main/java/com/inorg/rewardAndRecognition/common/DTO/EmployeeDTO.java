@@ -1,4 +1,4 @@
-package com.inorg.rewardAndRecognition.userPortal.dto;
+package com.inorg.rewardAndRecognition.common.DTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 
 @Data
 @Builder

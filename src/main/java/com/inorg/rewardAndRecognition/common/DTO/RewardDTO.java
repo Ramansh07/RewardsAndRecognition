@@ -1,15 +1,13 @@
-package com.inorg.rewardAndRecognition.userPortal.dto;
+package com.inorg.rewardAndRecognition.common.DTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-
+import lombok.NoArgsConstructor;
 @Data
 @Builder
-@AllArgsConstructor(staticName = "build")
+@AllArgsConstructor
+@NoArgsConstructor
 public class RewardDTO {
 
     @JsonProperty("RewardID")
@@ -23,5 +21,4 @@ public class RewardDTO {
 
     @JsonProperty("RewardLevel")
     private int rewardLevel;
-
 }

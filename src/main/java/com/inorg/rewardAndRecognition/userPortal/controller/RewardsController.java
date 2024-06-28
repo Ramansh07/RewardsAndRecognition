@@ -1,36 +1,44 @@
 package com.inorg.rewardAndRecognition.userPortal.controller;
-import com.inorg.rewardAndRecognition.userPortal.dto.RewardDTO;
-import com.inorg.rewardAndRecognition.userPortal.service.RewardsService;
+
+import com.inorg.rewardAndRecognition.common.DTO.ResponseDTO;
+import com.inorg.rewardAndRecognition.common.DTO.RewardDTO;
+import com.inorg.rewardAndRecognition.common.service.RewardService;
+import com.inorg.rewardAndRecognition.common.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/user-portal")
 public class RewardsController {
 
-    private final RewardsService rewardsService;
+    private final RewardService rewardsService;
 
     @Autowired
-    public RewardsController(RewardsService rewardsService) {
+    public RewardsController(RewardService rewardsService) {
         this.rewardsService = rewardsService;
     }
 
     @GetMapping("/rewards")
-    public ResponseEntity<List<RewardDTO>> getRewards() throws Exception {
-        List<RewardDTO> rewards = rewardsService.getAllRewards();
-        return ResponseEntity.ok().body(rewards);
-    }
-    //getActiveRewardById
-    @GetMapping("/reward/{rewardId}")
-    public ResponseEntity<RewardDTO> getActiveRewardById(@PathVariable int rewardId) throws Exception {
-        RewardDTO reward = rewardsService.getActiveRewardById(rewardId);
-        return ResponseEntity.ok().body(reward);
+    public ResponseEntity<ResponseDTO> getRewards() throws Exception {
+        return ResponseEntity.ok(ResponseDTO.build(true,
+                "Rewards retrieved successfully",
+                LocalDateTime.now(),
+                rewardsService.getAllRewards(),
+                null));
     }
 
+    @GetMapping("/reward/{rewardId}")
+    public ResponseEntity<ResponseDTO> getActiveRewardById(@PathVariable int rewardId) throws Exception {
+        return ResponseEntity.ok(ResponseDTO.build(true,
+                "Rewards retrieved successfully",
+                LocalDateTime.now(),
+                rewardsService.getRewardById(rewardId),
+                null));
+    }
 
 }

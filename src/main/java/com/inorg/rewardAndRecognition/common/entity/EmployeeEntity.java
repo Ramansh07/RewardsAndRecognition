@@ -1,4 +1,4 @@
-package com.inorg.rewardAndRecognition.userPortal.entity;
+package com.inorg.rewardAndRecognition.common.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -46,7 +46,7 @@ public class EmployeeEntity {
     private Boolean isActive;
 
     @CreationTimestamp
-    @Column(name = "CreatedDateTime", nullable = false, updatable = false)
+    @Column(name = "CreatedDateTime", updatable = false)
     private LocalDateTime createdDateTime;
 
     @Column(name = "CreatedBy")

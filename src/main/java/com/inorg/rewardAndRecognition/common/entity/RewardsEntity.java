@@ -1,4 +1,4 @@
-package com.inorg.rewardAndRecognition.userPortal.entity;
+package com.inorg.rewardAndRecognition.common.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,21 +28,21 @@ public class RewardsEntity {
     private String rewardName;
 
     @CreationTimestamp
-    @Column(name = "CreatedDateTime", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "CreatedDateTime", updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdDateTime;
 
     @UpdateTimestamp
-    @Column(name = "LastModifiedDateTime", nullable = false, columnDefinition = "TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @Column(name = "LastModifiedDateTime", columnDefinition = "TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime lastModifiedDateTime;
 
-    @Column(name = "IsActive", nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
+    @Column(name = "IsActive",columnDefinition = "BOOLEAN DEFAULT true")
     private boolean isActive;
 
-    @Column(name = "LastModifiedBy", nullable = false)
+    @Column(name = "LastModifiedBy")
     private String lastModifiedBy;
 
-    @Column(name = "CreatedBy", nullable = false)
-    private String createdBy;
+    @Column(name = "CreatedBy",  columnDefinition = "VARCHAR(255) DEFAULT 'system'")
+    private String createdBy; // Default value 'system'
 
     @Column(name = "IsDeleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
     private boolean isDeleted;
