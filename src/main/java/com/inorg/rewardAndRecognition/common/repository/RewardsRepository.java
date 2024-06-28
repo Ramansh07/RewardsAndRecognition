@@ -8,9 +8,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RewardsRepository extends JpaRepository<RewardsEntity, Long> {
+    List<RewardsEntity> findByRewardNameAndIsActiveTrueAndIsDeletedFalse(String rewardName);
+
+
 
     List<RewardsEntity> findByIsActiveTrueAndIsDeletedFalse();
 
@@ -18,7 +22,7 @@ public interface RewardsRepository extends JpaRepository<RewardsEntity, Long> {
 
     @Modifying
     @Query("UPDATE RewardsEntity r SET r.isDeleted = true, r.isActive = false WHERE r.id IN :ids")
-    void softDeleteByIds(List<Long> ids);
+    Optional<List<RewardsEntity>> softDeleteByIds(List<Long> ids);
 
     List<RewardsEntity> findByIdIn(List<Long> ids);
 }

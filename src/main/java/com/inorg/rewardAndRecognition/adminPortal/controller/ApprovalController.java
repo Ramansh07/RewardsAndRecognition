@@ -27,9 +27,9 @@ public class ApprovalController {
         this.approvalService = approvalService;
     }
 
-    @GetMapping("/pending-approvals/{approvalLevel}")
-    public ResponseEntity<ResponseDTO> getPendingApprovals(@PathVariable int approvalLevel) {
-        List<PendingApprovalsDTO> pendingApprovals = approvalService.getPendingApprovals(approvalLevel);
+    @GetMapping("/status-approvals/{userId}/{approvalLevel}/{approvalStatus}")
+    public ResponseEntity<ResponseDTO> getApprovalStatus(@PathVariable String userId, @PathVariable int approvalLevel, @PathVariable int approvalStatus) throws Exception{
+        List<PendingApprovalsDTO> pendingApprovals = approvalService.getApprovalStatus(userId, approvalLevel, approvalStatus);
 
         ResponseDTO response = ResponseDTO.build(
                 true,

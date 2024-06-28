@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface NominationRepository extends JpaRepository<NominationEntity, Long> {
-    List<NominationEntity> findByNominationIdIn(List<Integer> nominationIds);
+    List<NominationEntity> findByNominationIdInAndIsActiveTrueAndIsDeletedFalse(List<Integer> nominationIds);
 }

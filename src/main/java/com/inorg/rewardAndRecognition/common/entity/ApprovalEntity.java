@@ -14,13 +14,13 @@ public class ApprovalEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long approvalId;
 
     @Column(name = "nominationid", nullable = false)
     private int nominationId;
 
-    @Column(name = "approvalid", length = 255)
-    private String approvalId;
+    @Column(name = "approveeid", length = 255)
+    private String approveeId;
 
     @Column(name = "approvallevel", nullable = false)
     private int approvalLevel;
