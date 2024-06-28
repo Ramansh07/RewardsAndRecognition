@@ -1,10 +1,8 @@
 package com.inorg.rewardAndRecognition.userPortal.controller;
-
 import com.inorg.rewardAndRecognition.common.DTO.ResponseDTO;
 import com.inorg.rewardAndRecognition.userPortal.dto.NominateDTO;
-import com.inorg.rewardAndRecognition.userPortal.service.NominateService;
+import com.inorg.rewardAndRecognition.userPortal.service.NominationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,10 +14,10 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping(path = "/user-portal")
 public class NominateController {
-    private final NominateService nominateService;
+    private final NominationService nominateService;
 
     @Autowired
-    public NominateController(NominateService nominateService) {
+    public NominateController(NominationService nominateService) {
         this.nominateService = nominateService;
     }
 
