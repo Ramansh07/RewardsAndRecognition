@@ -1,4 +1,5 @@
 package com.inorg.rewardAndRecognition.adminPortal.controller;
+import com.inorg.rewardAndRecognition.adminPortal.DTO.ApprovalUpdateDTO;
 import com.inorg.rewardAndRecognition.adminPortal.DTO.PendingApprovalsDTO;
 import com.inorg.rewardAndRecognition.adminPortal.service.ApprovalService;
 import com.inorg.rewardAndRecognition.common.DTO.ResponseDTO;
@@ -7,10 +8,7 @@ import com.inorg.rewardAndRecognition.common.exceptions.ResourceNotFoundExceptio
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,7 +39,19 @@ public class ApprovalController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-//    @PutMapping("change-status")
-//    public ResponseEntity<>
+    @PutMapping("/status-change/{userId}")
+    public ResponseEntity<ResponseDTO> statusChange(@RequestBody List<ApprovalUpdateDTO> dto, @PathVariable String userId) throws Exception{
+
+
+        ResponseDTO response = ResponseDTO.build(
+                true,
+                "Pending approvals retrieved successfully",
+                LocalDateTime.now(),
+                approvalService.updateApprovalStatusBulk(dto, userId),
+                null
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 }

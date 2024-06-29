@@ -15,7 +15,7 @@ public class NominationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-    private Long nominationId;
+    private int nominationId;
     private String nominatorId;
     private String nomineeId;
     private Integer rewardId;
@@ -24,5 +24,6 @@ public class NominationEntity {
     private LocalDateTime lastModifiedDateTime;
     private Boolean isActive;
     private Boolean isDeleted;
+    private int status;
 
 }

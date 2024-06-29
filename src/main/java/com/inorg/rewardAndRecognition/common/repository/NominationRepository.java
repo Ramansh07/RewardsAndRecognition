@@ -13,8 +13,8 @@ import java.util.Optional;
 public interface NominationRepository extends JpaRepository<NominationEntity, Long> {
     Optional<List<NominationEntity>> findByNominationIdInAndIsActiveTrueAndIsDeletedFalse(List<Integer> nominationIds);
 
-    @Modifying
     @Transactional
+    @Modifying
     @Query("UPDATE NominationEntity n SET n.status = -1 WHERE n.nominationId = :nominationId")
     void markAsDenied(int nominationId);
 

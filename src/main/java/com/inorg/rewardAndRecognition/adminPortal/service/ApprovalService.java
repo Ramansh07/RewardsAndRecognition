@@ -27,12 +27,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class ApprovalService {
+    @Autowired
+    private NominationRepository nominationRepository;
 
     @Autowired
     private ApprovalRepository approvalRepository;
-
-    @Autowired
-    private NominationRepository nominationRepository;
 
     @Autowired
     private EmployeeService employeeService;
@@ -94,7 +93,7 @@ public class ApprovalService {
     }
 
     @Transactional
-    public void updateApprovalStatusBulk(List<ApprovalUpdateDTO> approvalUpdateDTOs, String userId)
+    public String updateApprovalStatusBulk(List<ApprovalUpdateDTO> approvalUpdateDTOs, String userId)
             throws NoAuthorisationException, ResourceNotFoundException, InvalidRequest {
         EmployeeDTO user = employeeService.findActiveEmployeeById(userId);
         if (user.getRole() < rewardCreationAuthorityLevel) {
@@ -109,6 +108,8 @@ public class ApprovalService {
             approvalRepository.save(approval);
             handleApprovalStatusChange(approval, dto.getStatus(), userId);
         }
+        return "sucesssssssss";
+
     }
 
     private void validateStatusChange(ApprovalEntity approval, int newStatus) throws InvalidRequest {
