@@ -68,7 +68,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public Optional<List<EmployeeDTO>> putRoles(List<SetRoleDTO> roleDTOs) throws ResourceNotFoundException, InvalidRequest {
+    public List<EmployeeDTO> putRoles(List<SetRoleDTO> roleDTOs) throws ResourceNotFoundException, InvalidRequest {
         List<String> employeeIds = roleDTOs.stream()
                 .map(SetRoleDTO::getEmployeeId)
                 .collect(Collectors.toList());
@@ -88,10 +88,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         List<EmployeeEntity> updatedEmployees = employeeRepository.saveAll(employees);
-        List<EmployeeDTO> updatedDTOs = updatedEmployees.stream()
+        return updatedEmployees.stream()
                 .map(this::mapEntityToDTO)
                 .collect(Collectors.toList());
-        return Optional.of(updatedDTOs);
     }
 
     @Override
