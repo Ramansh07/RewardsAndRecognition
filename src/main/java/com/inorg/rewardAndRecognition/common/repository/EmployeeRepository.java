@@ -10,10 +10,10 @@ import java.util.Optional;
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long>{
 
     @Query("SELECT e FROM EmployeeEntity e WHERE e.isActive = true AND e.isDeleted = false")
-    List<EmployeeEntity> findActiveEmployees();
+    Optional<List<EmployeeEntity>> findActiveEmployees();
 
     @Query("SELECT e FROM EmployeeEntity e WHERE e.isActive = true AND e.isDeleted = false AND e.empId = :id")
-    EmployeeEntity findActiveEmployeeById(@Param("id") String id);
+    Optional<EmployeeEntity> findActiveEmployeeById(@Param("id") String id);
 
     @Query("SELECT e FROM EmployeeEntity e WHERE e.isActive = true AND e.isDeleted = false AND e.email = :email")
     Optional<EmployeeEntity> findActiveEmployeeByEmail(@Param("email") String email);

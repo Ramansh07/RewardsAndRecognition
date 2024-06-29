@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,31 +29,33 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Optional<List<EmployeeDTO>> findAllActiveEmployees() throws ResourceNotFoundException {
-        List<EmployeeEntity> activeEmployees = employeeRepository.findActiveEmployees();
+    public List<EmployeeDTO> findAllActiveEmployees() throws ResourceNotFoundException {
+        Optional<List<EmployeeEntity>> activeEmployees = employeeRepository.findActiveEmployees();
         if (activeEmployees.isEmpty()) {
             throw new ResourceNotFoundException("No active employees found");
         }
-        List<EmployeeDTO> employeeDTOs = activeEmployees.stream()
+        List<EmployeeEntity>temp = activeEmployees.get();
+        return temp.stream()
                 .map(this::mapEntityToDTO)
                 .collect(Collectors.toList());
-        return Optional.of(employeeDTOs);
+
     }
 
     @Override
-    public Optional<EmployeeDTO> findActiveEmployeeById(String id) throws ResourceNotFoundException, InvalidRequest {
+    public EmployeeDTO findActiveEmployeeById(String id) throws ResourceNotFoundException, InvalidRequest {
         if (id == null || id.isEmpty()) {
             throw new InvalidRequest("Employee ID cannot be null or empty");
         }
-        Optional<EmployeeEntity> optionalEmployeeEntity = Optional.ofNullable(employeeRepository.findActiveEmployeeById(id));
+        Optional<EmployeeEntity> optionalEmployeeEntity = employeeRepository.findActiveEmployeeById(id);
         if (optionalEmployeeEntity.isEmpty()) {
             throw new ResourceNotFoundException("No active employee found with ID: " + id);
         }
-        return optionalEmployeeEntity.map(this::mapEntityToDTO);
+
+        return mapEntityToDTO(optionalEmployeeEntity.get());
     }
 
     @Override
-    public Optional<EmployeeDTO> findActiveEmployeeByEmail(String email) throws ResourceNotFoundException, InvalidRequest {
+    public EmployeeDTO findActiveEmployeeByEmail(String email) throws ResourceNotFoundException, InvalidRequest {
         if (email == null || email.isEmpty()) {
             throw new InvalidRequest("Employee email cannot be null or empty");
         }
@@ -60,7 +63,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (optionalEmployeeEntity.isEmpty()) {
             throw new ResourceNotFoundException("No active employee found with email: " + email);
         }
-        return optionalEmployeeEntity.map(this::mapEntityToDTO);
+        return mapEntityToDTO(optionalEmployeeEntity.get());
     }
 
     @Override
@@ -93,18 +96,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public Optional<EmployeeDTO> postDescription(String id, SetDescriptionDTO descriptionDTO) throws ResourceNotFoundException, InvalidRequest {
+    public EmployeeDTO postDescription(String id, SetDescriptionDTO descriptionDTO) throws ResourceNotFoundException, InvalidRequest {
         if (id == null || id.isEmpty()) {
             throw new InvalidRequest("Employee ID cannot be null or empty");
         }
-        Optional<EmployeeEntity> optionalEmployeeEntity = Optional.ofNullable(employeeRepository.findActiveEmployeeById(id));
+        Optional<EmployeeEntity> optionalEmployeeEntity = employeeRepository.findActiveEmployeeById(id);
         if (optionalEmployeeEntity.isEmpty()) {
             throw new ResourceNotFoundException("No active employee found with ID: " + id);
         }
         EmployeeEntity employeeEntity = optionalEmployeeEntity.get();
         employeeEntity.setDescription(descriptionDTO.getDescription());
         EmployeeEntity updatedEmployee = employeeRepository.save(employeeEntity);
-        return Optional.of(mapEntityToDTO(updatedEmployee));
+        return mapEntityToDTO(updatedEmployee);
     }
 
     // Helper method to map EmployeeEntity to EmployeeDTO

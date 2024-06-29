@@ -26,44 +26,37 @@ public class RewardController {
     }
 
     @GetMapping("/rewards")
-    public ResponseEntity<List<RewardDTO>> getRewards() throws Exception {
-        Optional<List<RewardDTO>> rewardDTOs = rewardService.getAllRewards();
-        if (rewardDTOs.isPresent()) {
-            return new ResponseEntity<>(rewardDTOs.get(), HttpStatus.OK);
-        } else {
-            throw new ResourceNotFoundException("No rewards found");
-        }
+    public ResponseEntity<ResponseDTO> getRewards() throws Exception {
+        return ResponseEntity.ok(ResponseDTO.build(true,
+                "Rewards retrieved successfully",
+                LocalDateTime.now(),
+                rewardService.getAllRewards(),
+                null));
     }
 
     @PostMapping(path = "/rewards/create-rewards")
     public ResponseEntity<ResponseDTO> postRewards(@RequestBody List<CreateRewardDTO> rewardDTOs) throws Exception {
-        Optional<List<RewardDTO>> createdRewards = rewardService.createRewards(rewardDTOs);
-        ResponseDTO responseDTO = ResponseDTO.build(true,
+        return ResponseEntity.ok(ResponseDTO.build(true,
                 "Rewards created successfully",
                 LocalDateTime.now(),
-                createdRewards,
-                null);
-        return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
+                rewardService.createRewards(rewardDTOs),
+                null));
     }
     @PutMapping(path = "/rewards/update-rewards")
     public ResponseEntity<ResponseDTO> updateRewards(@RequestBody List<RewardDTO> rewardDTOs) throws Exception {
-        Optional<List<RewardDTO>> updatedRewards = rewardService.updateRewards(rewardDTOs);
-        ResponseDTO responseDTO = ResponseDTO.build(true,
-                "Rewards created successfully",
+        return ResponseEntity.ok(ResponseDTO.build(true,
+                "Rewards updated successfully",
                 LocalDateTime.now(),
-                updatedRewards,
-                null);
-        return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
+                rewardService.updateRewards(rewardDTOs),
+                null));
     }
     @PutMapping(path = "/rewards/delete-rewards/{userId}")
     public ResponseEntity<ResponseDTO> deleteRewards(@PathVariable String userId, @RequestBody List<Integer> rewardIds) throws Exception {
-        Optional<List<RewardDTO>> deletedRewards = rewardService.deleteRewards(rewardIds, userId);
-        ResponseDTO responseDTO = ResponseDTO.build(true,
-                "Rewards created successfully",
+        return ResponseEntity.ok(ResponseDTO.build(true,
+                "Rewards updated successfully",
                 LocalDateTime.now(),
-                deletedRewards,
-                null);
-        return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
+                rewardService.deleteRewards(rewardIds, userId),
+                null));
     }
 }
 

@@ -13,11 +13,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "rewards")
 public class RewardsEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Long Id;
-
     @Column(name = "RewardID", nullable = false, unique = true)
     private int rewardId;
 

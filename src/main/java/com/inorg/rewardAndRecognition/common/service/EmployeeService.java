@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EmployeeService {
-    Optional<List<EmployeeDTO>> findAllActiveEmployees() throws ResourceNotFoundException;
-    Optional<EmployeeDTO> findActiveEmployeeById(String id) throws ResourceNotFoundException, InvalidRequest;
-    Optional<EmployeeDTO> findActiveEmployeeByEmail(String email) throws ResourceNotFoundException, InvalidRequest;
+    List<EmployeeDTO> findAllActiveEmployees() throws ResourceNotFoundException;
+    EmployeeDTO findActiveEmployeeById(String id) throws ResourceNotFoundException, InvalidRequest;
+    EmployeeDTO findActiveEmployeeByEmail(String email) throws ResourceNotFoundException, InvalidRequest;
     Optional<List<EmployeeDTO>> putRoles(List<SetRoleDTO> roleDTOs) throws ResourceNotFoundException, InvalidRequest;
-    Optional<EmployeeDTO> postDescription(String id, SetDescriptionDTO descriptionDTO) throws ResourceNotFoundException, InvalidRequest;
+    EmployeeDTO postDescription(String id, SetDescriptionDTO descriptionDTO) throws ResourceNotFoundException, InvalidRequest;
 }
 

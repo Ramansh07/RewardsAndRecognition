@@ -5,7 +5,8 @@ import com.inorg.rewardAndRecognition.userPortal.dto.NominationDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface NominationRepository extends JpaRepository<NominationEntity, Long> {
-    List<NominationEntity> findByNominationIdInAndIsActiveTrueAndIsDeletedFalse(List<Integer> nominationIds);
+    Optional<List<NominationEntity>> findByNominationIdInAndIsActiveTrueAndIsDeletedFalse(List<Integer> nominationIds);
 }

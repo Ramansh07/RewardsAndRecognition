@@ -47,22 +47,22 @@ public class NominationService {
         List<NominationRewardDTO> rewards = nominateDTO.getRewards();
         String nominatorId  = nominator.getId();
         NominationEntity nomination = new NominationEntity();
-        Optional<EmployeeDTO> nominatorCheck = employeeService.findActiveEmployeeById(nominatorId);
+        EmployeeDTO nominatorCheck = employeeService.findActiveEmployeeById(nominatorId);
         nomination.setNominatorId(nominatorId);
 
         for (NominationRewardDTO reward : rewards) {
             int rewardId = reward.getId();
-            Optional<RewardDTO> rewardCheck  = rewardService.getRewardById(rewardId);
+            RewardDTO rewardCheck  = rewardService.getRewardById(rewardId);
             nomination.setRewardId(rewardId);
             nomination.setJustification(reward.getTeamJustification());
 
-            if(rewardCheck.isPresent() && rewardCheck.get().getRewardLevel()>nominatorCheck.get().getRole()){
+            if(rewardCheck.getRewardLevel()>nominatorCheck.getRole()){
                 throw new NoAuthorisationException("you are not authorised to give out the reward, Please talk to admin @inorg.com");
             }
 
             for(NomineeDTO nominee: reward.getNominees() ) {
                 String nomineeId = nominee.getId();
-                Optional<EmployeeDTO> nomineeCheck = employeeService.findActiveEmployeeById(nomineeId);
+                EmployeeDTO nomineeCheck = employeeService.findActiveEmployeeById(nomineeId);
                 nomination.setNomineeId(nomineeId);
                 if(!nominee.getInlineJustification().isEmpty())nomination.setJustification(nominee.getInlineJustification());
                 nomination.setCreatedDateTime(LocalDateTime.now());
