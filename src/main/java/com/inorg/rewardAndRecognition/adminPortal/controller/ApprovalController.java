@@ -45,7 +45,7 @@ public class ApprovalController {
 
         ResponseDTO response = ResponseDTO.build(
                 true,
-                "Pending approvals retrieved successfully",
+                "status changed successfully",
                 LocalDateTime.now(),
                 approvalService.updateApprovalStatusBulk(dto, userId),
                 null

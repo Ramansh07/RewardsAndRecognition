@@ -106,6 +106,13 @@ public class ApprovalService {
             validateStatusChange(approval, dto.getStatus());
             approval.setApprovalStatus(dto.getStatus());
             approvalRepository.save(approval);
+            if (approval.getApprovalLevel() == 1 && dto.getStatus() == 1) {
+                ApprovalEntity approvalLevel2 = new ApprovalEntity();
+                approvalLevel2.setNominationId(approval.getNominationId());
+                approvalLevel2.setApprovalLevel(2);
+                approvalLevel2.setApprovalStatus(0);
+                approvalRepository.save(approvalLevel2);
+            }
             handleApprovalStatusChange(approval, dto.getStatus(), userId);
         }
         return "sucesssssssss";
