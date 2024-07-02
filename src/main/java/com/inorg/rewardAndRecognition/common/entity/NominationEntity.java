@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class NominationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private int nominationId;
     private String nominatorId;
     private String nomineeId;

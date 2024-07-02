@@ -1,12 +1,19 @@
 package com.inorg.rewardAndRecognition.common.service;
 
 import com.inorg.rewardAndRecognition.common.DTO.EmployeeDTO;
+import com.inorg.rewardAndRecognition.common.DTO.EmployeeHistoryDTO;
 import com.inorg.rewardAndRecognition.common.DTO.SetDescriptionDTO;
 import com.inorg.rewardAndRecognition.common.DTO.SetRoleDTO;
 import com.inorg.rewardAndRecognition.common.entity.EmployeeEntity;
+import com.inorg.rewardAndRecognition.common.entity.EmployeeRoleMappingEntity;
+import com.inorg.rewardAndRecognition.common.entity.HistoryEntity;
+import com.inorg.rewardAndRecognition.common.entity.NominationEntity;
 import com.inorg.rewardAndRecognition.common.exceptions.InvalidRequest;
 import com.inorg.rewardAndRecognition.common.exceptions.ResourceNotFoundException;
 import com.inorg.rewardAndRecognition.common.repository.EmployeeRepository;
+import com.inorg.rewardAndRecognition.common.repository.EmployeeRoleMappingRepository;
+import com.inorg.rewardAndRecognition.common.repository.HistoryRepository;
+import com.inorg.rewardAndRecognition.common.repository.NominationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,9 +31,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
 
     @Autowired
+    private EmployeeRoleMappingRepository employeeRoleMappingRepository;
+
+    @Autowired
+    private NominationRepository nominationRepository;
+
+    @Autowired
     public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
+
 
     @Override
     public List<EmployeeDTO> findAllActiveEmployees() throws ResourceNotFoundException {
@@ -109,7 +123,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         return mapEntityToDTO(updatedEmployee);
     }
 
-    // Helper method to map EmployeeEntity to EmployeeDTO
+    @Override
+    public List<EmployeeRoleMappingEntity> getEmployeeRoleMapping() throws Exception {
+        return  employeeRoleMappingRepository.findAll();
+    }
+
+
+
+
     private EmployeeDTO mapEntityToDTO(EmployeeEntity entity) {
         return EmployeeDTO.builder()
                 .empId(entity.getEmpId())

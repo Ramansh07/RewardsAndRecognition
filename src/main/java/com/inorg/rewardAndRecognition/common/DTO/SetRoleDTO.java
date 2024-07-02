@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class SetRoleDTO {
 
-    @JsonProperty("employeeId")
+    @JsonProperty("employeeID")
     private String employeeId;
 
-    @JsonProperty("role")
+    @JsonProperty("Role")
     private int role;
 }

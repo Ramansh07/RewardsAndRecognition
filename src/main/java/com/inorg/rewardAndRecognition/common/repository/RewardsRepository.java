@@ -15,8 +15,6 @@ import java.util.Optional;
 public interface RewardsRepository extends JpaRepository<RewardsEntity, Long> {
     Optional<RewardsEntity> findByRewardNameAndIsActiveTrueAndIsDeletedFalse(String rewardName);
 
-
-
     Optional<List<RewardsEntity>> findByIsActiveTrueAndIsDeletedFalse();
 
     Optional<RewardsEntity> findByRewardIdAndIsActiveTrueAndIsDeletedFalse(int rewardId);

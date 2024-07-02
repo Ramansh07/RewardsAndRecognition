@@ -1,5 +1,6 @@
 package com.inorg.rewardAndRecognition.userPortal.controller;
 
+import com.inorg.rewardAndRecognition.adminPortal.service.ApprovalService;
 import com.inorg.rewardAndRecognition.common.DTO.ResponseDTO;
 import com.inorg.rewardAndRecognition.common.DTO.SetDescriptionDTO;
 import com.inorg.rewardAndRecognition.common.service.EmployeeService;
@@ -16,10 +17,12 @@ import java.time.LocalDateTime;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final ApprovalService approvalService;
 
     @Autowired
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, ApprovalService approvalService) {
         this.employeeService = employeeService;
+        this.approvalService = approvalService;
     }
 
     @GetMapping("/employees")
@@ -28,6 +31,14 @@ public class EmployeeController {
                 "Employees retrieved successfully",
                 LocalDateTime.now(),
                 employeeService.findAllActiveEmployees(),
+                null));
+    }
+    @GetMapping("/employeeRoleMapping")
+    public ResponseEntity<ResponseDTO> getEmployeeRoleMapping() throws Exception {
+        return ResponseEntity.ok(ResponseDTO.build(true,
+                "Employee Roles retrieved successfully",
+                LocalDateTime.now(),
+                employeeService.getEmployeeRoleMapping(),
                 null));
     }
 
@@ -58,4 +69,12 @@ public class EmployeeController {
                 null));
     }
 
+    @GetMapping("/getEmployeeHistory/{employeeId}")
+    public ResponseEntity<ResponseDTO> getEmployeeHistory(@PathVariable String employeeId) throws Exception {
+        return ResponseEntity.ok(ResponseDTO.build(true,
+                "Employee history retrieved successfully",
+                LocalDateTime.now(),
+                approvalService.findEmployeeHistory(employeeId),
+                null));
+    }
 }

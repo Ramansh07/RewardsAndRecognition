@@ -40,7 +40,7 @@ public class RewardsEntity {
     private String lastModifiedBy;
 
     @Column(name = "CreatedBy",  columnDefinition = "VARCHAR(255) DEFAULT 'system'")
-    private String createdBy; // Default value 'system'
+    private String createdBy;
 
     @Column(name = "IsDeleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
     private boolean isDeleted;

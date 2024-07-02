@@ -1,16 +1,11 @@
 package com.inorg.rewardAndRecognition.userPortal.controller;
-
 import com.inorg.rewardAndRecognition.common.DTO.ResponseDTO;
-import com.inorg.rewardAndRecognition.common.DTO.RewardDTO;
 import com.inorg.rewardAndRecognition.common.service.RewardService;
-import com.inorg.rewardAndRecognition.common.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping(path = "/user-portal")
@@ -40,5 +35,12 @@ public class RewardsController {
                 rewardsService.getRewardById(rewardId),
                 null));
     }
-
+    @GetMapping("/rewardLevels")
+    public ResponseEntity<ResponseDTO> getRewardLevels() throws Exception {
+        return ResponseEntity.ok(ResponseDTO.build(true,
+                "Reward levels retrieved successfully",
+                LocalDateTime.now(),
+                rewardsService.gerRewardLevelMapping(),
+                null));
+    }
 }

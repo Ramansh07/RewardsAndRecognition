@@ -18,5 +18,11 @@ public interface NominationRepository extends JpaRepository<NominationEntity, Lo
     @Query("UPDATE NominationEntity n SET n.status = -1 WHERE n.nominationId = :nominationId")
     void markAsDenied(int nominationId);
 
+    @Transactional
+    @Modifying
+    @Query("UPDATE NominationEntity n SET n.status = 1 WHERE n.nominationId = :nominationId")
+    void markAsApproved(int nominationId);
+
     NominationEntity findByNominationId(Integer nominationId);
+    Optional<List<NominationEntity>>findByNomineeIdAndStatus(String id, int status);
 }

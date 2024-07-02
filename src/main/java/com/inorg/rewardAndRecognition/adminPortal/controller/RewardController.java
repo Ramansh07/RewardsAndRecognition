@@ -1,18 +1,13 @@
 package com.inorg.rewardAndRecognition.adminPortal.controller;
-
 import com.inorg.rewardAndRecognition.adminPortal.DTO.CreateRewardDTO;
 import com.inorg.rewardAndRecognition.common.DTO.ResponseDTO;
 import com.inorg.rewardAndRecognition.common.DTO.RewardDTO;
-import com.inorg.rewardAndRecognition.common.exceptions.ResourceNotFoundException;
 import com.inorg.rewardAndRecognition.common.service.RewardService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("admin-portal")
@@ -31,6 +26,14 @@ public class RewardController {
                 "Rewards retrieved successfully",
                 LocalDateTime.now(),
                 rewardService.getAllRewards(),
+                null));
+    }
+    @GetMapping("/rewardLevels")
+    public ResponseEntity<ResponseDTO> getRewardLevels() throws Exception {
+        return ResponseEntity.ok(ResponseDTO.build(true,
+                "Reward levels retrieved successfully",
+                LocalDateTime.now(),
+                rewardService.gerRewardLevelMapping(),
                 null));
     }
 

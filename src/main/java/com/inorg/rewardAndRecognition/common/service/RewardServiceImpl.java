@@ -3,13 +3,16 @@ package com.inorg.rewardAndRecognition.common.service;
 import com.inorg.rewardAndRecognition.adminPortal.DTO.CreateRewardDTO;
 import com.inorg.rewardAndRecognition.common.DTO.EmployeeDTO;
 import com.inorg.rewardAndRecognition.common.DTO.RewardDTO;
+import com.inorg.rewardAndRecognition.common.entity.RewardLevelMappingEntity;
 import com.inorg.rewardAndRecognition.common.entity.RewardsEntity;
 import com.inorg.rewardAndRecognition.common.exceptions.NoAuthorisationException;
 import com.inorg.rewardAndRecognition.common.exceptions.ResourceNotFoundException;
+import com.inorg.rewardAndRecognition.common.repository.RewardLevelMappingRepository;
 import com.inorg.rewardAndRecognition.common.repository.RewardsRepository;
 import com.inorg.rewardAndRecognition.common.exceptions.InvalidRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +31,9 @@ public class RewardServiceImpl implements RewardService {
     private static final Logger logger = LoggerFactory.getLogger(RewardServiceImpl.class);
     private final RewardsRepository rewardsRepository;
     private final EmployeeService employeeService;
+
+    @Autowired
+    private RewardLevelMappingRepository rewardLevelMappingRepository;
     public RewardServiceImpl(RewardsRepository rewardsRepository, EmployeeService employeeService) {
         this.rewardsRepository = rewardsRepository;
         this.employeeService = employeeService;
@@ -144,6 +150,11 @@ public class RewardServiceImpl implements RewardService {
                 .map(this::mapEntityToDto)
                 .collect(Collectors.toList());
 
+    }
+
+    @Override
+    public List<RewardLevelMappingEntity> gerRewardLevelMapping() throws Exception {
+        return rewardLevelMappingRepository.findAll();
     }
 
     private RewardDTO mapEntityToDto(RewardsEntity entity) {

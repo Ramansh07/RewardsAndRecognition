@@ -2,6 +2,7 @@ package com.inorg.rewardAndRecognition.adminPortal.service;
 import com.inorg.rewardAndRecognition.adminPortal.DTO.ApprovalUpdateDTO;
 import com.inorg.rewardAndRecognition.adminPortal.DTO.PendingApprovalsDTO;
 import com.inorg.rewardAndRecognition.common.DTO.EmployeeDTO;
+import com.inorg.rewardAndRecognition.common.DTO.EmployeeHistoryDTO;
 import com.inorg.rewardAndRecognition.common.DTO.RewardDTO;
 import com.inorg.rewardAndRecognition.common.entity.ApprovalEntity;
 import com.inorg.rewardAndRecognition.common.entity.HistoryEntity;
@@ -10,7 +11,6 @@ import com.inorg.rewardAndRecognition.common.exceptions.InvalidRequest;
 import com.inorg.rewardAndRecognition.common.exceptions.NoAuthorisationException;
 import com.inorg.rewardAndRecognition.common.exceptions.ResourceNotFoundException;
 import com.inorg.rewardAndRecognition.common.repository.ApprovalRepository;
-import com.inorg.rewardAndRecognition.common.repository.EmployeeRepository;
 import com.inorg.rewardAndRecognition.common.repository.HistoryRepository;
 import com.inorg.rewardAndRecognition.common.repository.NominationRepository;
 import com.inorg.rewardAndRecognition.common.service.EmployeeService;
@@ -25,25 +25,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 @Service
 public class ApprovalService {
+
     @Autowired
     private NominationRepository nominationRepository;
-
     @Autowired
     private ApprovalRepository approvalRepository;
-
     @Autowired
     private EmployeeService employeeService;
-
     @Autowired
     private RewardService rewardService;
-
     @Autowired
     private HistoryRepository historyRepository;
-
-    @Autowired
-    private EmployeeRepository employeeRepository;
     @Value("${reward.creation.authority}")
     private  int rewardCreationAuthorityLevel;
 
@@ -115,7 +110,7 @@ public class ApprovalService {
             }
             handleApprovalStatusChange(approval, dto.getStatus(), userId);
         }
-        return "sucesssssssss";
+        return "success";
 
     }
 
@@ -133,6 +128,7 @@ public class ApprovalService {
         if (newStatus == -1) {
             nominationRepository.markAsDenied(approval.getNominationId());
         } else if (approval.getApprovalLevel() == 2 && newStatus == 1) {
+            nominationRepository.markAsApproved(approval.getNominationId());
             handleLevel2Approval(approval, userId);
         }
     }
@@ -146,7 +142,7 @@ public class ApprovalService {
                 .rewardId(nomination.getRewardId())
                 .nominationId(Math.toIntExact(nomination.getNominationId()))
                 .rewardDate(LocalDateTime.now())
-                .cdn("CDN Value") // Set appropriately
+                .cdn("CDN Value")
                 .createdDateTime(LocalDateTime.now())
                 .updatedDateTime(LocalDateTime.now())
                 .createdBy(userId)
@@ -156,7 +152,26 @@ public class ApprovalService {
         historyRepository.save(history);
     }
 
-
-
-
+    public List<EmployeeHistoryDTO> findEmployeeHistory(String id) throws Exception {
+        List<EmployeeHistoryDTO>resp = new ArrayList<>();
+        Optional<List<NominationEntity>> nominationEntities = nominationRepository.findByNomineeIdAndStatus(id, 1);
+        if(nominationEntities.isEmpty())throw new ResourceNotFoundException("The given user didn't win any awards till date");
+        else{
+            for(NominationEntity nominationEntity: nominationEntities.get()){
+                String nominator = nominationEntity.getNominatorId();
+                String nominatorName = employeeService.findActiveEmployeeById(nominator).getUserName();
+                int rewardId = nominationEntity.getRewardId();
+                String rewardName = rewardService.getRewardById(rewardId).getRewardName();
+                String justification = nominationEntity.getJustification();
+                resp.add(
+                        EmployeeHistoryDTO.builder()
+                                .nominatorName(nominatorName)
+                                .nominationJustification(justification)
+                                .rewardName(rewardName)
+                                .build()
+                );
+            }
+        }
+        return resp;
+    }
 }
