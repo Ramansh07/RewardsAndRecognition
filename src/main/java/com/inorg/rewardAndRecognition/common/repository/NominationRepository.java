@@ -5,6 +5,7 @@ import com.inorg.rewardAndRecognition.userPortal.dto.NominationDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -23,6 +24,14 @@ public interface NominationRepository extends JpaRepository<NominationEntity, Lo
     @Query("UPDATE NominationEntity n SET n.status = 1 WHERE n.nominationId = :nominationId")
     void markAsApproved(int nominationId);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE NominationEntity n SET n.level = n.level + 1 WHERE n.nominationId = :nominationId")
+    void incrementLevel(@Param("nominationId") int nominationId);
+
     NominationEntity findByNominationId(Integer nominationId);
     Optional<List<NominationEntity>>findByNomineeIdAndStatus(String id, int status);
+
+
+    Optional<List<NominationEntity>>findByNominatorId(String id);
 }

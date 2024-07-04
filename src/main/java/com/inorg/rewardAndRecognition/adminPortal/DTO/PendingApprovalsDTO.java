@@ -14,7 +14,7 @@ public class PendingApprovalsDTO {
     private String approvalLevel;
     private String nominatorName;
     private String nomineeName;
-    private String justification;
+    private String justificationForNomination;
     private String rewardName;
-
+    private String justificationForApprovalDenial;
 }

@@ -54,30 +54,36 @@ public class NominationService {
             int rewardId = reward.getId();
             RewardDTO rewardCheck  = rewardService.getRewardById(rewardId);
 
-
             if(rewardCheck.getRewardLevel()>nominatorCheck.getRole()){
                 throw new NoAuthorisationException("you are not authorised to give out the reward, Please talk to admin @inorg.com");
             }
 
             for(NomineeDTO nominee: reward.getNominees() ) {
-                NominationEntity nomination = new NominationEntity();
-                nomination.setNominatorId(nominatorId);
                 String nomineeId = nominee.getId();
-                nomination.setRewardId(rewardId);
-                nomination.setJustification(reward.getTeamJustification());
                 EmployeeDTO nomineeCheck = employeeService.findActiveEmployeeById(nomineeId);
-                nomination.setNomineeId(nomineeId);
-                if(!nominee.getInlineJustification().isEmpty())nomination.setJustification(nominee.getInlineJustification());
-                nomination.setCreatedDateTime(LocalDateTime.now());
-                nomination.setLastModifiedDateTime(LocalDateTime.now());
-                nomination.setIsActive(true);
-                nomination.setIsDeleted(false);
-                NominationEntity createdNomination = nominationRepository.save(nomination);
-                ApprovalEntity approval = new ApprovalEntity();
-                approval.setNominationId(Math.toIntExact(createdNomination.getNominationId()));
-                approval.setApprovalLevel(1);
-                approval.setApprovalStatus(0);
-                ApprovalEntity savedApproval = approvalRepository.save(approval);
+                NominationEntity createdNomination =nominationRepository.save(NominationEntity.builder()
+                        .nominatorId(nominatorId)
+                        .nomineeId(nomineeId)
+                        .rewardId(rewardId)
+                        .justification(!nominee.getInlineJustification().isEmpty()?nominee.getInlineJustification(): reward.getTeamJustification())
+                        .createdDateTime(LocalDateTime.now())
+                        .lastModifiedDateTime(LocalDateTime.now())
+                        .isActive(true)
+                        .isDeleted(false)
+                        .level(1)
+                        .status(0)
+                        .build());
+
+                ApprovalEntity savedApproval = approvalRepository.save(ApprovalEntity.builder()
+                          .nominationId(Math.toIntExact(createdNomination.getNominationId()))
+                          .approvalLevel(1)
+                          .approvalStatus(0)
+                          .createdAt(LocalDateTime.now())
+                          .lastModifiedAt(LocalDateTime.now())
+                          .createdBy(nominatorId)
+                          .lastModifiedBy(nominatorId)
+                          .build());
+
                 savedApprovals.add(savedApproval);
             }
 

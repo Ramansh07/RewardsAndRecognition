@@ -13,4 +13,5 @@ public class ApprovalUpdateDTO {
     private Long approvalId;
     private String adminId;
     private int status;
+    private String justification;
 }

@@ -5,7 +5,6 @@ import com.inorg.rewardAndRecognition.common.DTO.EmployeeDTO;
 import com.inorg.rewardAndRecognition.common.DTO.EmployeeHistoryDTO;
 import com.inorg.rewardAndRecognition.common.DTO.RewardDTO;
 import com.inorg.rewardAndRecognition.common.entity.ApprovalEntity;
-import com.inorg.rewardAndRecognition.common.entity.HistoryEntity;
 import com.inorg.rewardAndRecognition.common.entity.NominationEntity;
 import com.inorg.rewardAndRecognition.common.exceptions.InvalidRequest;
 import com.inorg.rewardAndRecognition.common.exceptions.NoAuthorisationException;
@@ -15,11 +14,11 @@ import com.inorg.rewardAndRecognition.common.repository.HistoryRepository;
 import com.inorg.rewardAndRecognition.common.repository.NominationRepository;
 import com.inorg.rewardAndRecognition.common.service.EmployeeService;
 import com.inorg.rewardAndRecognition.common.service.RewardService;
+import com.inorg.rewardAndRecognition.userPortal.dto.NominatorHistoryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,14 +40,21 @@ public class ApprovalService {
     private HistoryRepository historyRepository;
     @Value("${reward.creation.authority}")
     private  int rewardCreationAuthorityLevel;
+    @Value("${approval.min.authority}")
+    private int minApprovalAuthority;
+    @Value("${approval.min.Level}")
+    private int minApprovalLevel;
+    @Value("${approval.max.Level}")
+    private int maxApprovalLevel;
+
+
 
     public List<PendingApprovalsDTO> getApprovalStatus(String userId, int approvalLevel, int approvalStatus)
             throws NoAuthorisationException, ResourceNotFoundException, InvalidRequest {
         EmployeeDTO user = employeeService.findActiveEmployeeById(userId);
-        if (user.getRole() < rewardCreationAuthorityLevel) {
-            throw new NoAuthorisationException("You are not authorized to see the approval status of rewards");
+        if (user.getRole() < minApprovalAuthority + approvalLevel -1) {
+            throw new NoAuthorisationException("You are not authorized to see the approval status of rewards of such level");
         }
-
         List<ApprovalEntity> approvals = approvalRepository.findByApprovalLevelAndApprovalStatus(approvalLevel, approvalStatus);
         List<Integer> nominationIds = approvals.stream()
                 .map(ApprovalEntity::getNominationId)
@@ -61,8 +67,6 @@ public class ApprovalService {
         List<NominationEntity> temp = nominations.get();
         List<PendingApprovalsDTO> pendingApprovalsDTOList = new ArrayList<>();
         for (ApprovalEntity approval : approvals) {
-
-                System.out.println("approvalId "+ approval.getApprovalId()+"\n");
                 NominationEntity nomination = null;
                 for (NominationEntity tempNomination : temp) {
                     if (tempNomination.getNominationId() == approval.getNominationId()) {
@@ -70,15 +74,14 @@ public class ApprovalService {
                         EmployeeDTO nominator = employeeService.findActiveEmployeeById(nomination.getNominatorId());
                         EmployeeDTO nominee = employeeService.findActiveEmployeeById(nomination.getNomineeId());
                         RewardDTO reward = rewardService.getRewardById(nomination.getRewardId());
-
                         PendingApprovalsDTO dto = PendingApprovalsDTO.builder()
                                 .approvalId(approval.getApprovalId())
                                 .nominatorName(nominator.getUserName())
                                 .nomineeName(nominee.getUserName())
-                                .justification(nomination.getJustification())
+                                .justificationForNomination(nomination.getJustification())
+                                .justificationForApprovalDenial(approval.getJustification())
                                 .rewardName(reward.getRewardName())
                                 .build();
-
                         pendingApprovalsDTOList.add(dto);
 
                     }
@@ -87,24 +90,26 @@ public class ApprovalService {
         return pendingApprovalsDTOList;
     }
 
+    public ApprovalEntity findApprovalById(Long id) throws Exception {
+        Optional<ApprovalEntity> resp = approvalRepository.findById(id);
+        if(resp.isEmpty())throw new ResourceNotFoundException("the approval id which you are trying to access doesn't exist. ID: "+ id);
+        return resp.get();
+    }
+
     @Transactional
-    public String updateApprovalStatusBulk(List<ApprovalUpdateDTO> approvalUpdateDTOs, String userId)
-            throws NoAuthorisationException, ResourceNotFoundException, InvalidRequest {
+    public String updateApprovalStatusBulk(List<ApprovalUpdateDTO> approvalUpdateDTOs, String userId) throws Exception {
         EmployeeDTO user = employeeService.findActiveEmployeeById(userId);
-        if (user.getRole() < rewardCreationAuthorityLevel) {
-            throw new NoAuthorisationException("You are not authorized to update approval status");
-        }
 
         for (ApprovalUpdateDTO dto : approvalUpdateDTOs) {
-            ApprovalEntity approval = approvalRepository.findById(dto.getApprovalId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Approval not found: " + dto.getApprovalId()));
-            validateStatusChange(approval, dto.getStatus());
+            ApprovalEntity approval = findApprovalById(dto.getApprovalId());
+            validateStatusChange(approval, dto.getStatus(), user.getRole());
             approval.setApprovalStatus(dto.getStatus());
+            approval.setJustification(dto.getJustification());
             approvalRepository.save(approval);
-            if (approval.getApprovalLevel() == 1 && dto.getStatus() == 1) {
+            if (approval.getApprovalLevel() < maxApprovalLevel && dto.getStatus() == 1) {
                 ApprovalEntity approvalLevel2 = new ApprovalEntity();
                 approvalLevel2.setNominationId(approval.getNominationId());
-                approvalLevel2.setApprovalLevel(2);
+                approvalLevel2.setApprovalLevel(approval.getApprovalLevel()+1);
                 approvalLevel2.setApprovalStatus(0);
                 approvalRepository.save(approvalLevel2);
             }
@@ -114,42 +119,28 @@ public class ApprovalService {
 
     }
 
-    private void validateStatusChange(ApprovalEntity approval, int newStatus) throws InvalidRequest {
+    private void validateStatusChange(ApprovalEntity approval, int newStatus, int userRole) throws Exception {
         int currentStatus = approval.getApprovalStatus();
-
+        int currentLevel = approval.getApprovalLevel();
+        if(userRole<minApprovalAuthority+currentLevel-1)throw new NoAuthorisationException("you are not authorised to change status of this reward");
         if ((currentStatus == 1 && newStatus == -1) || (currentStatus == -1 && newStatus == 1)) {
             throw new InvalidRequest("Invalid status change request: Cannot change from " +
                     (currentStatus == 1 ? "approved to denied" : "denied to approved"));
         }
+
     }
 
     private void handleApprovalStatusChange(ApprovalEntity approval, int newStatus, String userId)
             throws ResourceNotFoundException {
+        int nominationId = approval.getNominationId();
         if (newStatus == -1) {
-            nominationRepository.markAsDenied(approval.getNominationId());
-        } else if (approval.getApprovalLevel() == 2 && newStatus == 1) {
-            nominationRepository.markAsApproved(approval.getNominationId());
-            handleLevel2Approval(approval, userId);
+            nominationRepository.markAsDenied(nominationId);
+        } else if (approval.getApprovalLevel() == maxApprovalLevel && newStatus == 1) {
+            nominationRepository.markAsApproved(nominationId);
         }
-    }
-
-    private void handleLevel2Approval(ApprovalEntity approval, String userId) {
-
-        NominationEntity nomination = nominationRepository.findByNominationId(approval.getNominationId());
-
-        HistoryEntity history = HistoryEntity.builder()
-                .userId(nomination.getNomineeId())
-                .rewardId(nomination.getRewardId())
-                .nominationId(Math.toIntExact(nomination.getNominationId()))
-                .rewardDate(LocalDateTime.now())
-                .cdn("CDN Value")
-                .createdDateTime(LocalDateTime.now())
-                .updatedDateTime(LocalDateTime.now())
-                .createdBy(userId)
-                .modifiedBy(userId)
-                .build();
-
-        historyRepository.save(history);
+        else{
+            nominationRepository.incrementLevel(nominationId);
+        }
     }
 
     public List<EmployeeHistoryDTO> findEmployeeHistory(String id) throws Exception {
@@ -171,6 +162,33 @@ public class ApprovalService {
                                 .build()
                 );
             }
+        }
+        return resp;
+    }
+    public String convertIntegerStatusToString(int a){
+        if(a==1)return "approved";
+        else if(a==0)return "pending";
+        else return "denied";
+    }
+    public List<NominatorHistoryDTO> nominatorHistory(String nominatorId) throws  Exception{
+        Optional<List<NominationEntity>> optionalNominationEntities = nominationRepository.findByNominatorId(nominatorId);
+        if(optionalNominationEntities.isEmpty())throw new ResourceNotFoundException("The nominator has no current nominations");
+        List<NominatorHistoryDTO> resp = new ArrayList<>();
+        for (NominationEntity nomination : optionalNominationEntities.get()){
+            String reasonForDenial = "";
+            if (nomination.getStatus()==-1){
+                Optional<String>denialReason = approvalRepository.findJustificationByNominationIdAndApprovalStatus(nomination.getNominationId(),-1);
+                reasonForDenial = denialReason.orElse("");
+            }
+            resp.add(
+                    NominatorHistoryDTO.builder()
+                            .currentLevel(nomination.getLevel())
+                            .currentStatus(convertIntegerStatusToString(nomination.getStatus()))
+                            .justificationForNomination(nomination.getJustification())
+                            .nomineeName(employeeService.findActiveEmployeeById(nomination.getNomineeId()).getUserName())
+                            .reasonForDenial(reasonForDenial)
+                            .build()
+            );
         }
         return resp;
     }

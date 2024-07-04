@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
 
+
     private final EmployeeRepository employeeRepository;
 
     @Autowired
@@ -49,6 +50,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new ResourceNotFoundException("No active employees found");
         }
         List<EmployeeEntity>temp = activeEmployees.get();
+
         return temp.stream()
                 .map(this::mapEntityToDTO)
                 .collect(Collectors.toList());
