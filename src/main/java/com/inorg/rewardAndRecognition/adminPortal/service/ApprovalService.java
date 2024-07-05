@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,9 +44,9 @@ public class ApprovalService {
     private  int rewardCreationAuthorityLevel;
     @Value("${approval.min.authority}")
     private int minApprovalAuthority;
-    @Value("${approval.min.Level}")
+    @Value("${approval.min.level}")
     private int minApprovalLevel;
-    @Value("${approval.max.Level}")
+    @Value("${approval.max.level}")
     private int maxApprovalLevel;
 
 
@@ -105,6 +107,8 @@ public class ApprovalService {
             validateStatusChange(approval, dto.getStatus(), user.getRole());
             approval.setApprovalStatus(dto.getStatus());
             approval.setJustification(dto.getJustification());
+            approval.setLastModifiedBy(userId);
+            approval.setLastModifiedAt(LocalDateTime.now());
             approvalRepository.save(approval);
             if (approval.getApprovalLevel() < maxApprovalLevel && dto.getStatus() == 1) {
                 ApprovalEntity approvalLevel2 = new ApprovalEntity();

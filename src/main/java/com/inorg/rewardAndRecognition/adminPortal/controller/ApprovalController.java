@@ -5,6 +5,7 @@ import com.inorg.rewardAndRecognition.adminPortal.service.ApprovalService;
 import com.inorg.rewardAndRecognition.common.DTO.ResponseDTO;
 import com.inorg.rewardAndRecognition.common.DTO.RewardDTO;
 import com.inorg.rewardAndRecognition.common.exceptions.ResourceNotFoundException;
+import com.inorg.rewardAndRecognition.userPortal.dto.NominatorHistoryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,7 @@ public class ApprovalController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     @PutMapping("/status-change/{userId}")
     public ResponseEntity<ResponseDTO> statusChange(@RequestBody List<ApprovalUpdateDTO> dto, @PathVariable String userId) throws Exception{
 
@@ -52,6 +54,19 @@ public class ApprovalController {
         );
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/approval-status")
+    public ResponseEntity<ResponseDTO> getNominatorHistory(@RequestParam String nominatorId) throws Exception{
+
+        return ResponseEntity.ok().body(ResponseDTO.build(
+                true,
+                "Pending approvals retrieved successfully",
+                LocalDateTime.now(),
+                approvalService.nominatorHistory(nominatorId),
+                null
+        ));
+
     }
 
 }
