@@ -51,8 +51,8 @@ public class EmployeeController {
                 null));
     }
 
-    @GetMapping("/employeeByEmail/{employeeEmail}")
-    public ResponseEntity<ResponseDTO> getEmployeeByEmail(@PathVariable String employeeEmail) throws Exception {
+    @GetMapping("/employee")
+    public ResponseEntity<ResponseDTO> getEmployeeByEmail(@RequestParam String employeeEmail) throws Exception {
         return ResponseEntity.ok(ResponseDTO.build(true,
                 "Employee retrieved successfully",
                 LocalDateTime.now(),
@@ -69,7 +69,7 @@ public class EmployeeController {
                 null));
     }
 
-    @GetMapping("/getEmployeeHistory/{employeeId}")
+    @GetMapping("/employee/{employeeId}/pastWins")
     public ResponseEntity<ResponseDTO> getEmployeeHistory(@PathVariable String employeeId) throws Exception {
         return ResponseEntity.ok(ResponseDTO.build(true,
                 "Employee history retrieved successfully",

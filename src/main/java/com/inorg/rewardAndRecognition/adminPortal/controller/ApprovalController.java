@@ -26,8 +26,8 @@ public class ApprovalController {
         this.approvalService = approvalService;
     }
 
-    @GetMapping("/status-approvals/{userId}/{approvalLevel}/{approvalStatus}")
-    public ResponseEntity<ResponseDTO> getApprovalStatus(@PathVariable String userId, @PathVariable int approvalLevel, @PathVariable int approvalStatus) throws Exception{
+    @GetMapping("/nomination-status")
+    public ResponseEntity<ResponseDTO> getApprovalStatus(@RequestParam String userId, @RequestParam int approvalLevel, @RequestParam int approvalStatus) throws Exception{
         List<PendingApprovalsDTO> pendingApprovals = approvalService.getApprovalStatus(userId, approvalLevel, approvalStatus);
 
         ResponseDTO response = ResponseDTO.build(
@@ -41,8 +41,8 @@ public class ApprovalController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/status-change/{userId}")
-    public ResponseEntity<ResponseDTO> statusChange(@RequestBody List<ApprovalUpdateDTO> dto, @PathVariable String userId) throws Exception{
+    @PutMapping("employee/change-status")
+    public ResponseEntity<ResponseDTO> statusChange(@RequestBody List<ApprovalUpdateDTO> dto, @RequestParam String userId) throws Exception{
 
 
         ResponseDTO response = ResponseDTO.build(
@@ -56,7 +56,7 @@ public class ApprovalController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/approval-status")
+    @GetMapping("/employee/approval-status")
     public ResponseEntity<ResponseDTO> getNominatorHistory(@RequestParam String nominatorId) throws Exception{
 
         return ResponseEntity.ok().body(ResponseDTO.build(
