@@ -14,6 +14,7 @@ import java.util.List;
 public class RewardController {
 
     private final RewardService rewardService;
+    int a;
 
     @Autowired
     public RewardController(RewardService rewardService) {
