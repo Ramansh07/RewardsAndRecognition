@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "build")
@@ -17,4 +19,5 @@ public class PendingApprovalsDTO {
     private String justificationForNomination;
     private String rewardName;
     private String justificationForApprovalDenial;
+    private LocalDateTime dateTime;
 }

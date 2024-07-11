@@ -53,15 +53,20 @@ public class ApprovalService {
 
     public List<PendingApprovalsDTO> getApprovalStatus(String userId, int approvalLevel, int approvalStatus)
             throws NoAuthorisationException, ResourceNotFoundException, InvalidRequest {
+
+        //validate the authority level
         EmployeeDTO user = employeeService.findActiveEmployeeById(userId);
         if (user.getRole() < minApprovalAuthority + approvalLevel -1) {
             throw new NoAuthorisationException("You are not authorized to see the approval status of rewards of such level");
         }
+
+        //find the approvals according to the level and status fields.
         List<ApprovalEntity> approvals = approvalRepository.findByApprovalLevelAndApprovalStatus(approvalLevel, approvalStatus);
         List<Integer> nominationIds = approvals.stream()
                 .map(ApprovalEntity::getNominationId)
                 .collect(Collectors.toList());
 
+        //from nomination id received from approval table we get the nominations from the nomination table
         Optional<List<NominationEntity>> nominations = nominationRepository.findByNominationIdInAndIsActiveTrueAndIsDeletedFalse(nominationIds);
         if (nominations.isEmpty()) {
             throw new ResourceNotFoundException("No nominations found");
@@ -83,6 +88,7 @@ public class ApprovalService {
                                 .justificationForNomination(nomination.getJustification())
                                 .justificationForApprovalDenial(approval.getJustification())
                                 .rewardName(reward.getRewardName())
+                                .dateTime(tempNomination.getCreatedDateTime())
                                 .build();
                         pendingApprovalsDTOList.add(dto);
 
@@ -163,6 +169,7 @@ public class ApprovalService {
                                 .nominatorName(nominatorName)
                                 .nominationJustification(justification)
                                 .rewardName(rewardName)
+                                .dateTime(nominationEntity.getLastModifiedDateTime())
                                 .build()
                 );
             }
@@ -191,6 +198,7 @@ public class ApprovalService {
                             .justificationForNomination(nomination.getJustification())
                             .nomineeName(employeeService.findActiveEmployeeById(nomination.getNomineeId()).getUserName())
                             .reasonForDenial(reasonForDenial)
+                            .dateTime(nomination.getCreatedDateTime())
                             .build()
             );
         }

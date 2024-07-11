@@ -23,13 +23,12 @@ public class ApprovalController {
 
     @GetMapping("/nomination-status")
     public ResponseEntity<ResponseDTO> getApprovalStatus(@RequestParam String userId, @RequestParam int approvalLevel, @RequestParam int approvalStatus) throws Exception{
-        List<PendingApprovalsDTO> pendingApprovals = approvalService.getApprovalStatus(userId, approvalLevel, approvalStatus);
 
         ResponseDTO response = ResponseDTO.build(
                 true,
                 "Pending approvals retrieved successfully",
                 LocalDateTime.now(),
-                pendingApprovals,
+                approvalService.getApprovalStatus(userId, approvalLevel, approvalStatus),
                 null
         );
 

@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -48,7 +49,8 @@ public class NominationService {
         String nominatorId  = nominator.getId();
 
         EmployeeDTO nominatorCheck = employeeService.findActiveEmployeeById(nominatorId);
-
+        List<NominationEntity> createdNominations = new ArrayList<>();
+        List<ApprovalEntity> createdApprovals = new ArrayList<>();
 
         for (NominationRewardDTO reward : rewards) {
             int rewardId = reward.getId();
@@ -61,7 +63,8 @@ public class NominationService {
             for(NomineeDTO nominee: reward.getNominees() ) {
                 String nomineeId = nominee.getId();
                 EmployeeDTO nomineeCheck = employeeService.findActiveEmployeeById(nomineeId);
-                NominationEntity createdNomination =nominationRepository.save(NominationEntity.builder()
+                if(Objects.equals(nomineeId, nominatorId))throw new NoAuthorisationException("You are not authorised to give yourself an award");
+                NominationEntity createdNomination =NominationEntity.builder()
                         .nominatorId(nominatorId)
                         .nomineeId(nomineeId)
                         .rewardId(rewardId)
@@ -72,21 +75,27 @@ public class NominationService {
                         .isDeleted(false)
                         .level(1)
                         .status(0)
-                        .build());
+                        .build();
 
-                ApprovalEntity savedApproval = approvalRepository.save(ApprovalEntity.builder()
-                          .nominationId(Math.toIntExact(createdNomination.getNominationId()))
-                          .approvalLevel(1)
-                          .approvalStatus(0)
-                          .createdAt(LocalDateTime.now())
-                          .lastModifiedAt(LocalDateTime.now())
-                          .createdBy(nominatorId)
-                          .lastModifiedBy(nominatorId)
-                          .build());
+                createdNominations.add(createdNomination);
 
-                savedApprovals.add(savedApproval);
             }
 
+        }
+        for (NominationEntity createdNomination : createdNominations) {
+            NominationEntity savedNomination = nominationRepository.save(createdNomination);
+
+            ApprovalEntity savedApproval = approvalRepository.save(ApprovalEntity.builder()
+                    .nominationId(Math.toIntExact(savedNomination.getNominationId()))
+                    .approvalLevel(1)
+                    .approvalStatus(0)
+                    .createdAt(LocalDateTime.now())
+                    .lastModifiedAt(LocalDateTime.now())
+                    .createdBy(nominatorId)
+                    .lastModifiedBy(nominatorId)
+                    .build());
+
+            savedApprovals.add(savedApproval);
         }
 
         return savedApprovals;
