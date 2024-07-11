@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,4 +17,5 @@ public class NominatorHistoryDTO {
     private int currentLevel;
     private String currentStatus;
     private String reasonForDenial;
+    private LocalDateTime dateTime;
 }
