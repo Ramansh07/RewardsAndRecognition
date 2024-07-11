@@ -14,16 +14,6 @@ public class AuthController {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    @GetMapping("/login")
-    public String login() {
-        return "redirect:/oauth2/authorization/google";
-    }
-
-    @GetMapping("/oauth2/callback")
-    public String callback(@AuthenticationPrincipal OAuth2User oauth2User) {
-        String token = generateToken(oauth2User.getName());
-        return "redirect:/home?token=" + token;
-    }
 
     private String generateToken(String username) {
         return Jwts.builder()
