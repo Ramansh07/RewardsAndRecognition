@@ -43,7 +43,7 @@ public class RewardServiceImpl implements RewardService {
     @Transactional
     public List<RewardDTO> createRewards(List<CreateRewardDTO> rewardDTOs) throws Exception {
 
-        EmployeeDTO user = employeeService.findActiveEmployeeById(rewardDTOs.getFirst().getUserId());
+        EmployeeDTO user = employeeService.findActiveEmployeeById(rewardDTOs.get(0).getUserId());
         if(user.getRole() < rewardCreationAuthorityLevel){
             throw new NoAuthorisationException("You are not authorised to create a reward");
         }
@@ -71,7 +71,7 @@ public class RewardServiceImpl implements RewardService {
     @Override
     @Transactional
     public List<RewardDTO> updateRewards(List<RewardDTO> rewardDTOs) throws Exception {
-        EmployeeDTO user = employeeService.findActiveEmployeeById(rewardDTOs.getFirst().getUserId());
+        EmployeeDTO user = employeeService.findActiveEmployeeById(rewardDTOs.get(0).getUserId());
         if(user.getRole() < rewardCreationAuthorityLevel){
             throw new NoAuthorisationException("You are not authorised to upadte a reward");
         }

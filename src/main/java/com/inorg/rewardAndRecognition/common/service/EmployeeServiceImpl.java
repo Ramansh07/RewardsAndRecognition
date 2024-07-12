@@ -45,6 +45,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<EmployeeDTO> findAllActiveEmployees() throws ResourceNotFoundException {
+        System.out.println("inside findAllActiveEmployees method");
         Optional<List<EmployeeEntity>> activeEmployees = employeeRepository.findActiveEmployees();
         if (activeEmployees.isEmpty()) {
             throw new ResourceNotFoundException("No active employees found");

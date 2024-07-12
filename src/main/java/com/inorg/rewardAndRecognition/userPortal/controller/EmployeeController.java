@@ -27,6 +27,7 @@ public class EmployeeController {
 
     @GetMapping("/employees")
     public ResponseEntity<ResponseDTO> getEmployees() throws Exception {
+        System.out.println("\n\ninside get employees\n\n");
         return ResponseEntity.ok(ResponseDTO.build(true,
                 "Employees retrieved successfully",
                 LocalDateTime.now(),
