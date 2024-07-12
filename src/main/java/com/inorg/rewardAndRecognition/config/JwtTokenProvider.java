@@ -1,9 +1,8 @@
 package com.inorg.rewardAndRecognition.config;
 
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import io.jsonwebtoken.*;
@@ -16,6 +15,7 @@ import io.jsonwebtoken.JwtParser.*;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import java.text.ParseException;
 import java.util.Date;
 
 @Component
@@ -62,38 +62,83 @@ public class JwtTokenProvider {
     }
 
 
-    public boolean validateToken(String token) {
-        try {
-            System.out.println("\n\n"+token+"\n\n");
-            Claims claims = Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .parseClaimsJws(token)
-                    .getBody();
+//    public boolean validateToken(String token) {
+//        try {
+//
+//            System.out.println("\n\n"+token+"\n\n");
+//            Claims claims = Jwts.parser()
+//                    .setSigningKey(secretKey)
+//                    .parseClaimsJws(token)
+//                    .getBody();
+//
+//            System.out.println("\n\nclaims"+claims+"\n\n");
+//
+//            // Check token expiration
+//            Date expiration = claims.getExpiration();
+//            if (expiration != null && expiration.before(new Date())) {
+//                return false;
+//            }
+//            return true;
+//        } catch (Exception e) {
+//            System.out.println(e);
+//            return false;
+//        }
+//    }
+public boolean validateToken(String token) {
+    try {
+        // Parse the token
+        System.out.println("\n\n"+token+"\n\n");
+        SignedJWT signedJWT = SignedJWT.parse(token);
 
-            System.out.println("\n\nclaims"+claims+"\n\n");
+        byte[] secretKeyBytes = secretKey.getBytes();
+        JWSVerifier verifier = new MACVerifier(secretKeyBytes);
 
-            // Check token expiration
-            Date expiration = claims.getExpiration();
-            if (expiration != null && expiration.before(new Date())) {
-                return false;
-            }
-            return true;
-        } catch (Exception e) {
+        if (!signedJWT.verify(verifier)) {
+            System.out.println("JWT signature verification failed");
             return false;
         }
+        Date expiration = signedJWT.getJWTClaimsSet().getExpirationTime();
+        if (expiration != null && expiration.before(new Date())) {
+            System.out.println("JWT token expired");
+            return false;
+        }
+        return true;
+    } catch (ParseException | JOSEException e) {
+        System.out.println("Error parsing/verifying JWT: " + e.getMessage());
+        return false;
     }
+}
 
     public String getAccessToken(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("accessToken", String.class);
     }
 
-    public String getUsername(String token) {
-        return Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+//    public String getUsername(String token) {
+//        return Jwts.parser()
+//                .setSigningKey(secretKey)
+//                .parseClaimsJws(token)
+//                .getBody()
+//                .getSubject();
+//    }
+public String getUsername(String token) {
+    try {
+
+        SignedJWT signedJWT = SignedJWT.parse(token);
+
+        byte[] secretKeyBytes = secretKey.getBytes();
+        JWSVerifier verifier = new MACVerifier(secretKeyBytes);
+
+        if (!signedJWT.verify(verifier)) {
+            System.out.println("JWT signature verification failed");
+            return null;
+        }
+        return signedJWT.getJWTClaimsSet().getSubject();
+
+    } catch (ParseException | JOSEException e) {
+        System.out.println("Error parsing/verifying JWT: " + e.getMessage());
+        return null;
     }
+}
 
     public String
 

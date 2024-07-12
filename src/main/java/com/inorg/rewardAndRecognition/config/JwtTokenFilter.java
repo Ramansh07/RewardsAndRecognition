@@ -37,23 +37,26 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String token = jwtTokenProvider.resolveToken(request);
 
         if (token != null && jwtTokenProvider.validateToken(token)) {
-            System.out.println("token-token:" );
+
             String email = jwtTokenProvider.getUsername(token);
 
             EmployeeDTO employeeDTO = null;
-            try {
-                employeeDTO = employeeService.findActiveEmployeeByEmail(email);
-            } catch (ResourceNotFoundException | InvalidRequest e) {
-                throw new RuntimeException(e);
-            }
 
-            if (employeeDTO != null) {
+            System.out.println("token-token:"+ email + "\n");
+//
+//            try {
+//                System.out.println("---------tututututututututututututututut");
+//                employeeDTO = employeeService.findActiveEmployeeByEmail(email);
+//                System.out.println("---------tututututututututututututututut");
+//            } catch (ResourceNotFoundException | InvalidRequest e) {
+//                throw new RuntimeException(e);
+//            }
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         email, null, Collections.emptyList());
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+
         }
 
         filterChain.doFilter((ServletRequest) request, (ServletResponse) response);
