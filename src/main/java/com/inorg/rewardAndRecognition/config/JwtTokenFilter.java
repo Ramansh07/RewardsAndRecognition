@@ -43,14 +43,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             EmployeeDTO employeeDTO = null;
 
             System.out.println("token-token:"+ email + "\n");
-//
-//            try {
-//                System.out.println("---------tututututututututututututututut");
-//                employeeDTO = employeeService.findActiveEmployeeByEmail(email);
-//                System.out.println("---------tututututututututututututututut");
-//            } catch (ResourceNotFoundException | InvalidRequest e) {
-//                throw new RuntimeException(e);
-//            }
+
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         email, null, Collections.emptyList());
 
