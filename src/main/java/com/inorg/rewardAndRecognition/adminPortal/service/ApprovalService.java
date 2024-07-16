@@ -6,6 +6,7 @@ import com.inorg.rewardAndRecognition.common.DTO.EmployeeHistoryDTO;
 import com.inorg.rewardAndRecognition.common.DTO.RewardDTO;
 import com.inorg.rewardAndRecognition.common.entity.ApprovalEntity;
 import com.inorg.rewardAndRecognition.common.entity.NominationEntity;
+import com.inorg.rewardAndRecognition.common.service.NominationServiceCommon;
 import com.inorg.rewardAndRecognition.config.exceptions.InvalidRequest;
 import com.inorg.rewardAndRecognition.config.exceptions.NoAuthorisationException;
 import com.inorg.rewardAndRecognition.config.exceptions.ResourceNotFoundException;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +29,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class ApprovalService {
-
     @Autowired
     private NominationRepository nominationRepository;
+    @Autowired
+    private NominationServiceCommon nominationServiceCommon;
     @Autowired
     private ApprovalRepository approvalRepository;
     @Autowired
@@ -54,24 +55,18 @@ public class ApprovalService {
     public List<PendingApprovalsDTO> getApprovalStatus(String userId, int approvalLevel, int approvalStatus)
             throws NoAuthorisationException, ResourceNotFoundException, InvalidRequest {
 
-        //validate the authority level
         EmployeeDTO user = employeeService.findActiveEmployeeById(userId);
         if (user.getRole() < minApprovalAuthority + approvalLevel -1) {
             throw new NoAuthorisationException("You are not authorized to see the approval status of rewards of such level");
         }
 
-        //find the approvals according to the level and status fields.
         List<ApprovalEntity> approvals = approvalRepository.findByApprovalLevelAndApprovalStatus(approvalLevel, approvalStatus);
         List<Integer> nominationIds = approvals.stream()
                 .map(ApprovalEntity::getNominationId)
                 .collect(Collectors.toList());
 
-        //from nomination id received from approval table we get the nominations from the nomination table
-        Optional<List<NominationEntity>> nominations = nominationRepository.findByNominationIdInAndIsActiveTrueAndIsDeletedFalse(nominationIds);
-        if (nominations.isEmpty()) {
-            throw new ResourceNotFoundException("No nominations found");
-        }
-        List<NominationEntity> temp = nominations.get();
+        List<NominationEntity> temp = nominationServiceCommon.findByNominationIdInAndIsActiveTrueAndIsDeletedFalse(nominationIds);
+
         List<PendingApprovalsDTO> pendingApprovalsDTOList = new ArrayList<>();
         for (ApprovalEntity approval : approvals) {
                 NominationEntity nomination = null;
@@ -155,10 +150,9 @@ public class ApprovalService {
 
     public List<EmployeeHistoryDTO> findEmployeeHistory(String id) throws Exception {
         List<EmployeeHistoryDTO>resp = new ArrayList<>();
-        Optional<List<NominationEntity>> nominationEntities = nominationRepository.findByNomineeIdAndStatus(id, 1);
-        if(nominationEntities.isEmpty())throw new ResourceNotFoundException("The given user didn't win any awards till date");
-        else{
-            for(NominationEntity nominationEntity: nominationEntities.get()){
+        List<NominationEntity> nominationEntities = nominationServiceCommon.findByNomineeIdAndStatus(id, 1);
+
+            for(NominationEntity nominationEntity:nominationEntities ){
                 String nominator = nominationEntity.getNominatorId();
                 String nominatorName = employeeService.findActiveEmployeeById(nominator).getUserName();
                 int rewardId = nominationEntity.getRewardId();
@@ -173,7 +167,7 @@ public class ApprovalService {
                                 .build()
                 );
             }
-        }
+
         return resp;
     }
     public String convertIntegerStatusToString(int a){
@@ -181,11 +175,12 @@ public class ApprovalService {
         else if(a==0)return "pending";
         else return "denied";
     }
+
     public List<NominatorHistoryDTO> nominatorHistory(String nominatorId) throws  Exception{
-        Optional<List<NominationEntity>> optionalNominationEntities = nominationRepository.findByNominatorId(nominatorId);
-        if(optionalNominationEntities.isEmpty())throw new ResourceNotFoundException("The nominator has no current nominations");
+       List<NominationEntity> nominationEntities = nominationServiceCommon.findByNominatorId(nominatorId);
+
         List<NominatorHistoryDTO> resp = new ArrayList<>();
-        for (NominationEntity nomination : optionalNominationEntities.get()){
+        for (NominationEntity nomination : nominationEntities){
             String reasonForDenial = "";
             if (nomination.getStatus()==-1){
                 Optional<String>denialReason = approvalRepository.findJustificationByNominationIdAndApprovalStatus(nomination.getNominationId(),-1);
