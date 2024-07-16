@@ -4,7 +4,6 @@ import com.inorg.rewardAndRecognition.adminPortal.service.ApprovalService;
 import com.inorg.rewardAndRecognition.common.DTO.ResponseDTO;
 import com.inorg.rewardAndRecognition.common.DTO.SetDescriptionDTO;
 import com.inorg.rewardAndRecognition.common.service.EmployeeService;
-import com.inorg.rewardAndRecognition.common.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

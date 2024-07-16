@@ -1,4 +1,4 @@
-package com.inorg.rewardAndRecognition.common.exceptions;
+package com.inorg.rewardAndRecognition.config.exceptions;
 
 public class ResourceNotFoundException extends Exception{
     public ResourceNotFoundException(String message) {

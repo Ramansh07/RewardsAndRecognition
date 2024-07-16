@@ -1,10 +1,10 @@
-package com.inorg.rewardAndRecognition.common.advice;
+package com.inorg.rewardAndRecognition.config;
 
 import com.inorg.rewardAndRecognition.common.DTO.ResponseDTO;
 import com.inorg.rewardAndRecognition.common.DTO.ErrorDetail;
-import com.inorg.rewardAndRecognition.common.exceptions.InvalidRequest;
-import com.inorg.rewardAndRecognition.common.exceptions.NoAuthorisationException;
-import com.inorg.rewardAndRecognition.common.exceptions.ResourceNotFoundException;
+import com.inorg.rewardAndRecognition.config.exceptions.InvalidRequest;
+import com.inorg.rewardAndRecognition.config.exceptions.NoAuthorisationException;
+import com.inorg.rewardAndRecognition.config.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

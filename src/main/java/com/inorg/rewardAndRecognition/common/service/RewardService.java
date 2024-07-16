@@ -2,11 +2,9 @@ package com.inorg.rewardAndRecognition.common.service;
 import com.inorg.rewardAndRecognition.adminPortal.DTO.CreateRewardDTO;
 import com.inorg.rewardAndRecognition.common.DTO.RewardDTO;
 import com.inorg.rewardAndRecognition.common.entity.RewardLevelMappingEntity;
-import com.inorg.rewardAndRecognition.common.entity.RewardsEntity;
-import com.inorg.rewardAndRecognition.common.exceptions.InvalidRequest;
-import com.inorg.rewardAndRecognition.common.exceptions.ResourceNotFoundException;
+import com.inorg.rewardAndRecognition.config.exceptions.InvalidRequest;
+import com.inorg.rewardAndRecognition.config.exceptions.ResourceNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 public interface RewardService {
     List<RewardDTO> createRewards(List<CreateRewardDTO> rewardDTOs) throws Exception;

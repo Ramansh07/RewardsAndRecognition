@@ -3,9 +3,6 @@ import com.inorg.rewardAndRecognition.adminPortal.DTO.ApprovalUpdateDTO;
 import com.inorg.rewardAndRecognition.adminPortal.DTO.PendingApprovalsDTO;
 import com.inorg.rewardAndRecognition.adminPortal.service.ApprovalService;
 import com.inorg.rewardAndRecognition.common.DTO.ResponseDTO;
-import com.inorg.rewardAndRecognition.common.DTO.RewardDTO;
-import com.inorg.rewardAndRecognition.common.exceptions.ResourceNotFoundException;
-import com.inorg.rewardAndRecognition.userPortal.dto.NominatorHistoryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/admin-portal")

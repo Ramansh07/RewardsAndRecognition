@@ -1,25 +1,20 @@
 package com.inorg.rewardAndRecognition.common.service;
 
 import com.inorg.rewardAndRecognition.common.DTO.EmployeeDTO;
-import com.inorg.rewardAndRecognition.common.DTO.EmployeeHistoryDTO;
 import com.inorg.rewardAndRecognition.common.DTO.SetDescriptionDTO;
 import com.inorg.rewardAndRecognition.common.DTO.SetRoleDTO;
 import com.inorg.rewardAndRecognition.common.entity.EmployeeEntity;
 import com.inorg.rewardAndRecognition.common.entity.EmployeeRoleMappingEntity;
-import com.inorg.rewardAndRecognition.common.entity.HistoryEntity;
-import com.inorg.rewardAndRecognition.common.entity.NominationEntity;
-import com.inorg.rewardAndRecognition.common.exceptions.InvalidRequest;
-import com.inorg.rewardAndRecognition.common.exceptions.ResourceNotFoundException;
+import com.inorg.rewardAndRecognition.config.exceptions.InvalidRequest;
+import com.inorg.rewardAndRecognition.config.exceptions.ResourceNotFoundException;
 import com.inorg.rewardAndRecognition.common.repository.EmployeeRepository;
 import com.inorg.rewardAndRecognition.common.repository.EmployeeRoleMappingRepository;
-import com.inorg.rewardAndRecognition.common.repository.HistoryRepository;
 import com.inorg.rewardAndRecognition.common.repository.NominationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

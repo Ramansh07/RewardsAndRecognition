@@ -38,8 +38,6 @@ public class JwtTokenProvider {
 
             JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                     .subject(claimsSett.getStringClaim("email"))
-                    .claim("accessToken", accessToken)
-                    .claim("idToken", idToken)
                     .issueTime(now)
                     .expirationTime(validity)
                     .build();

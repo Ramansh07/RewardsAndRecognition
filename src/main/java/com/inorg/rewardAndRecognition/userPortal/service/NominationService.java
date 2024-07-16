@@ -2,10 +2,7 @@ package com.inorg.rewardAndRecognition.userPortal.service;
 
 import com.inorg.rewardAndRecognition.common.DTO.EmployeeDTO;
 import com.inorg.rewardAndRecognition.common.DTO.RewardDTO;
-import com.inorg.rewardAndRecognition.common.entity.EmployeeEntity;
-import com.inorg.rewardAndRecognition.common.exceptions.InvalidRequest;
-import com.inorg.rewardAndRecognition.common.exceptions.NoAuthorisationException;
-import com.inorg.rewardAndRecognition.common.exceptions.ResourceNotFoundException;
+import com.inorg.rewardAndRecognition.config.exceptions.NoAuthorisationException;
 import com.inorg.rewardAndRecognition.common.service.EmployeeService;
 import com.inorg.rewardAndRecognition.common.service.RewardService;
 import com.inorg.rewardAndRecognition.userPortal.dto.NominateDTO;
@@ -24,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class NominationService {

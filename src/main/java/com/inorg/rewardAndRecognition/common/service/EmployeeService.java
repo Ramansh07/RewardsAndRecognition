@@ -1,14 +1,12 @@
 package com.inorg.rewardAndRecognition.common.service;
 import com.inorg.rewardAndRecognition.common.DTO.EmployeeDTO;
-import com.inorg.rewardAndRecognition.common.DTO.EmployeeHistoryDTO;
 import com.inorg.rewardAndRecognition.common.DTO.SetRoleDTO;
 import com.inorg.rewardAndRecognition.common.DTO.SetDescriptionDTO;
 import com.inorg.rewardAndRecognition.common.entity.EmployeeRoleMappingEntity;
-import com.inorg.rewardAndRecognition.common.exceptions.ResourceNotFoundException;
-import com.inorg.rewardAndRecognition.common.exceptions.InvalidRequest;
+import com.inorg.rewardAndRecognition.config.exceptions.ResourceNotFoundException;
+import com.inorg.rewardAndRecognition.config.exceptions.InvalidRequest;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface EmployeeService {
     List<EmployeeDTO> findAllActiveEmployees() throws ResourceNotFoundException;
