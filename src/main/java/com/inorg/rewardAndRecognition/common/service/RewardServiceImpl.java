@@ -50,7 +50,6 @@ public class RewardServiceImpl implements RewardService {
         for (CreateRewardDTO createRewardDTO : rewardDTOs) {
             Optional<RewardsEntity>existingRewards = rewardsRepository.findByRewardNameAndIsActiveTrueAndIsDeletedFalse(createRewardDTO.getRewardName());
             if (existingRewards.isPresent()) {
-                System.out.println("\n\n" + existingRewards.get().getRewardName() + "\n\n");
                 throw new InvalidRequest("Reward with the name " + createRewardDTO.getRewardName() + " already exists.");
             }
         }

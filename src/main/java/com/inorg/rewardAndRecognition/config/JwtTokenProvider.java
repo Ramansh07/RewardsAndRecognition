@@ -42,12 +42,9 @@ public class JwtTokenProvider {
 
             signedJWT.sign(signer);
 
-            String jwtToken = signedJWT.serialize();
-            System.out.println("Generated JWT Token: " + jwtToken + "\n\n");
+            return signedJWT.serialize();
 
-            return jwtToken;
         } catch (Exception e) {
-            System.out.println("Exception occurred during token creation: " + e.getMessage());
             e.printStackTrace(); // Print stack trace for debugging
             throw new RuntimeException("Failed to create JWT token", e); // or handle accordingly
         }
@@ -55,25 +52,21 @@ public class JwtTokenProvider {
 
 public boolean validateToken(String token) {
     try {
-        // Parse the token
-        System.out.println("\n\n"+token+"\n\n");
+
         SignedJWT signedJWT = SignedJWT.parse(token);
 
         byte[] secretKeyBytes = secretKey.getBytes();
         JWSVerifier verifier = new MACVerifier(secretKeyBytes);
 
         if (!signedJWT.verify(verifier)) {
-            System.out.println("JWT signature verification failed");
             return false;
         }
         Date expiration = signedJWT.getJWTClaimsSet().getExpirationTime();
         if (expiration != null && expiration.before(new Date())) {
-            System.out.println("JWT token expired");
             return false;
         }
         return true;
     } catch (ParseException | JOSEException e) {
-        System.out.println("Error parsing/verifying JWT: " + e.getMessage());
         return false;
     }
 }
@@ -91,13 +84,11 @@ public String getUsername(String token) {
         JWSVerifier verifier = new MACVerifier(secretKeyBytes);
 
         if (!signedJWT.verify(verifier)) {
-            System.out.println("JWT signature verification failed");
             return null;
         }
         return signedJWT.getJWTClaimsSet().getSubject();
 
     } catch (ParseException | JOSEException e) {
-        System.out.println("Error parsing/verifying JWT: " + e.getMessage());
         return null;
     }
 }
@@ -107,7 +98,6 @@ public String getUsername(String token) {
     resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            System.out.println("token:" + bearerToken);
             return bearerToken.substring(7);
         }
         return null;

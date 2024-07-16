@@ -16,6 +16,5 @@ public class RewardAndRecognitionApplication {
 	}
 	public static void main(String[] args) {
 		SpringApplication.run(RewardAndRecognitionApplication.class, args);
-		System.out.println("hello world");
 	}
 }
