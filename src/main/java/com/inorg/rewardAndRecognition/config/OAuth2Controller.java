@@ -1,11 +1,8 @@
 package com.inorg.rewardAndRecognition.config;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,9 +22,6 @@ public class OAuth2Controller {
 
     @GetMapping("/oauth2/token")
     public Map<String, String> getAccessToken(@RequestParam String code) {
-
-        System.out.println("\n\n entered getAccessToken API \n\n");
-
         var clientRegistration = clientRegistrationRepository.findByRegistrationId("google");
         Map<String, String> params = new HashMap<>();
         params.put(OAuth2ParameterNames.CLIENT_ID, clientRegistration.getClientId());

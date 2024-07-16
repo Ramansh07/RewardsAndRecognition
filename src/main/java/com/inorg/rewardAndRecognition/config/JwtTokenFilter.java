@@ -16,9 +16,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    private  EmployeeService employeeService;
-
     public JwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
 
@@ -26,7 +23,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain filterChain)
             throws IOException, ServletException {
-        System.out.println("token-empty:" );
         String token = jwtTokenProvider.resolveToken(request);
 
         if (token != null && jwtTokenProvider.validateToken(token)) {
@@ -34,9 +30,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             String email = jwtTokenProvider.getUsername(token);
 
             EmployeeDTO employeeDTO = null;
-
-            System.out.println("token-token:"+ email + "\n");
-
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         email, null, Collections.emptyList());
 

@@ -1,10 +1,8 @@
 package com.inorg.rewardAndRecognition.config;
-
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;

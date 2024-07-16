@@ -1,5 +1,4 @@
 package com.inorg.rewardAndRecognition.config;
-
 import com.inorg.rewardAndRecognition.common.DTO.ResponseDTO;
 import com.inorg.rewardAndRecognition.common.DTO.ErrorDetail;
 import com.inorg.rewardAndRecognition.config.exceptions.InvalidRequest;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
