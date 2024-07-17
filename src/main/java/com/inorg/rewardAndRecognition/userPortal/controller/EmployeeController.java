@@ -74,12 +74,14 @@ public class EmployeeController {
                 null));
     }
 
-    @GetMapping("/employee/{employeeId}/pastWins")
-    public ResponseEntity<ResponseDTO> getEmployeeHistory(@PathVariable String employeeId) throws Exception {
+    @GetMapping("/employee/pastWins")
+    public ResponseEntity<ResponseDTO> getEmployeeHistory(HttpServletRequest request) throws Exception {
+        String token = jwtTokenProvider.resolveToken(request);
+        String adminId = jwtTokenProvider.getUsername(token);
         return ResponseEntity.ok(ResponseDTO.build(true,
                 "Employee history retrieved successfully",
                 LocalDateTime.now(),
-                approvalService.findEmployeeHistory(employeeId),
+                approvalService.findEmployeeHistory(adminId),
                 null));
     }
 }

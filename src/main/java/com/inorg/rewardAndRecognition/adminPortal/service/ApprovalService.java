@@ -55,7 +55,7 @@ public class ApprovalService {
     public List<PendingApprovalsDTO> getApprovalStatus(String userId, int approvalLevel, int approvalStatus)
             throws NoAuthorisationException, ResourceNotFoundException, InvalidRequest {
 
-        EmployeeDTO user = employeeService.findActiveEmployeeById(userId);
+        EmployeeDTO user = employeeService.findActiveEmployeeByEmail(userId);
         if (user.getRole() < minApprovalAuthority + approvalLevel -1) {
             throw new NoAuthorisationException("You are not authorized to see the approval status of rewards of such level");
         }
@@ -101,7 +101,7 @@ public class ApprovalService {
 
     @Transactional
     public String updateApprovalStatusBulk(List<ApprovalUpdateDTO> approvalUpdateDTOs, String userId) throws Exception {
-        EmployeeDTO user = employeeService.findActiveEmployeeById(userId);
+        EmployeeDTO user = employeeService.findActiveEmployeeByEmail(userId);
 
         for (ApprovalUpdateDTO dto : approvalUpdateDTOs) {
             ApprovalEntity approval = findApprovalById(dto.getApprovalId());
@@ -148,7 +148,9 @@ public class ApprovalService {
         }
     }
 
-    public List<EmployeeHistoryDTO> findEmployeeHistory(String id) throws Exception {
+    public List<EmployeeHistoryDTO> findEmployeeHistory(String adminId) throws Exception {
+        EmployeeDTO employeeObject = employeeService.findActiveEmployeeByEmail(adminId);
+        String id = employeeObject.getEmpId();
         List<EmployeeHistoryDTO>resp = new ArrayList<>();
         List<NominationEntity> nominationEntities = nominationServiceCommon.findByNomineeIdAndStatus(id, 1);
 
@@ -176,7 +178,9 @@ public class ApprovalService {
         else return "denied";
     }
 
-    public List<NominatorHistoryDTO> nominatorHistory(String nominatorId) throws  Exception{
+    public List<NominatorHistoryDTO> nominatorHistory(String nominatorEmailId) throws  Exception{
+        EmployeeDTO employeeObject = employeeService.findActiveEmployeeByEmail(nominatorEmailId);
+        String nominatorId = employeeObject.getEmpId();
        List<NominationEntity> nominationEntities = nominationServiceCommon.findByNominatorId(nominatorId);
 
         List<NominatorHistoryDTO> resp = new ArrayList<>();
