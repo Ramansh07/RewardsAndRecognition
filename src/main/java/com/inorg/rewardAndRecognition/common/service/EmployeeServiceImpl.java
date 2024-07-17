@@ -6,16 +6,19 @@ import com.inorg.rewardAndRecognition.common.DTO.SetRoleDTO;
 import com.inorg.rewardAndRecognition.common.entity.EmployeeEntity;
 import com.inorg.rewardAndRecognition.common.entity.EmployeeRoleMappingEntity;
 import com.inorg.rewardAndRecognition.config.exceptions.InvalidRequest;
+import com.inorg.rewardAndRecognition.config.exceptions.NoAuthorisationException;
 import com.inorg.rewardAndRecognition.config.exceptions.ResourceNotFoundException;
 import com.inorg.rewardAndRecognition.common.repository.EmployeeRepository;
 import com.inorg.rewardAndRecognition.common.repository.EmployeeRoleMappingRepository;
 import com.inorg.rewardAndRecognition.common.repository.NominationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -35,6 +38,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
+
+    @Value("${reward.creation.authority}")
+    private  int rewardCreationAuthorityLevel;
 
     @Override
     public List<EmployeeDTO> findAllActiveEmployees() throws ResourceNotFoundException {
@@ -77,10 +83,21 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public List<EmployeeDTO> putRoles(List<SetRoleDTO> roleDTOs) throws ResourceNotFoundException, InvalidRequest {
+    public List<EmployeeDTO> putRoles(String adminId, List<SetRoleDTO> roleDTOs) throws Exception {
+        EmployeeDTO adminObject = findActiveEmployeeByEmail(adminId);
+        if(adminObject.getRole()<rewardCreationAuthorityLevel){
+            throw new NoAuthorisationException("you are not authorised to change the roles");
+        }
+
         List<String> employeeIds = roleDTOs.stream()
                 .map(SetRoleDTO::getEmployeeId)
                 .collect(Collectors.toList());
+
+        for(String id: employeeIds){
+            if(Objects.equals(id, adminObject.getEmpId())){
+                throw new NoAuthorisationException("You are not authorised to change your own role");
+            }
+        }
 
         List<EmployeeEntity> employees = employeeRepository.findActiveEmployeesByIds(employeeIds);
         if (employees.size() != employeeIds.size()) {
@@ -104,10 +121,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public EmployeeDTO postDescription(String id, SetDescriptionDTO descriptionDTO) throws ResourceNotFoundException, InvalidRequest {
-        if (id == null || id.isEmpty()) {
-            throw new InvalidRequest("Employee ID cannot be null or empty");
-        }
+    public EmployeeDTO postDescription(String userId, SetDescriptionDTO descriptionDTO) throws Exception{
+        EmployeeDTO employeeObject = findActiveEmployeeByEmail(userId);
+        String id = employeeObject.getEmpId();
         Optional<EmployeeEntity> optionalEmployeeEntity = employeeRepository.findActiveEmployeeById(id);
         if (optionalEmployeeEntity.isEmpty()) {
             throw new ResourceNotFoundException("No active employee found with ID: " + id);

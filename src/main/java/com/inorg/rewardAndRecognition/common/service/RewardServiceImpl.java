@@ -41,9 +41,9 @@ public class RewardServiceImpl implements RewardService {
 
     @Override
     @Transactional
-    public List<RewardDTO> createRewards(List<CreateRewardDTO> rewardDTOs) throws Exception {
+    public List<RewardDTO> createRewards(String adminId, List<CreateRewardDTO> rewardDTOs) throws Exception {
 
-        EmployeeDTO user = employeeService.findActiveEmployeeById(rewardDTOs.get(0).getUserId());
+        EmployeeDTO user = employeeService.findActiveEmployeeByEmail(adminId);
         if(user.getRole() < rewardCreationAuthorityLevel){
             throw new NoAuthorisationException("You are not authorised to create a reward");
         }
@@ -55,7 +55,7 @@ public class RewardServiceImpl implements RewardService {
         }
 
         List<RewardsEntity> entitiesToSave = rewardDTOs.stream()
-                .map(this::mapCreateDtoToEntity)
+                .map(dto -> mapCreateDtoToEntity(dto, adminId))
                 .collect(Collectors.toList());
 
 
@@ -69,8 +69,8 @@ public class RewardServiceImpl implements RewardService {
 
     @Override
     @Transactional
-    public List<RewardDTO> updateRewards(List<RewardDTO> rewardDTOs) throws Exception {
-        EmployeeDTO user = employeeService.findActiveEmployeeById(rewardDTOs.get(0).getUserId());
+    public List<RewardDTO> updateRewards(String adminId, List<RewardDTO> rewardDTOs) throws Exception {
+        EmployeeDTO user = employeeService.findActiveEmployeeByEmail(adminId);
         if(user.getRole() < rewardCreationAuthorityLevel){
             throw new NoAuthorisationException("You are not authorised to upadte a reward");
         }
@@ -99,7 +99,7 @@ public class RewardServiceImpl implements RewardService {
     @Override
     @Transactional
     public List<RewardDTO> deleteRewards(List<Integer> rewardIds, String userId) throws InvalidRequest, Exception {
-        EmployeeDTO user = employeeService.findActiveEmployeeById(userId);
+        EmployeeDTO user = employeeService.findActiveEmployeeByEmail(userId);
         if (user.getRole() < rewardCreationAuthorityLevel) {
             throw new NoAuthorisationException("You are not authorised to delete a reward");
         }
@@ -165,16 +165,16 @@ public class RewardServiceImpl implements RewardService {
                 .build();
     }
 
-    private RewardsEntity mapCreateDtoToEntity(CreateRewardDTO dto) {
+    private RewardsEntity mapCreateDtoToEntity(CreateRewardDTO dto, String id) {
         RewardsEntity entity = new RewardsEntity();
         entity.setPoints(dto.getPoints());
         entity.setRewardName(dto.getRewardName());
         entity.setLevel(dto.getRewardLevel());
         entity.setDeleted(false);
         entity.setActive(true);
-        entity.setCreatedBy(dto.getUserId());
+        entity.setCreatedBy(id);
         entity.setCreatedDateTime(LocalDateTime.now());
-        entity.setLastModifiedBy(dto.getUserId());
+        entity.setLastModifiedBy(id);
         entity.setLastModifiedDateTime(LocalDateTime.now());
         return entity;
     }

@@ -14,10 +14,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class CreateRewardDTO {
 
-    @NotNull
-    @JsonProperty("userId")
-    private String userId;
-
     @JsonProperty("points")
     private Integer points;
 

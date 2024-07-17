@@ -4,6 +4,8 @@ import com.inorg.rewardAndRecognition.adminPortal.service.ApprovalService;
 import com.inorg.rewardAndRecognition.common.DTO.ResponseDTO;
 import com.inorg.rewardAndRecognition.common.DTO.SetDescriptionDTO;
 import com.inorg.rewardAndRecognition.common.service.EmployeeService;
+import com.inorg.rewardAndRecognition.config.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,8 @@ public class EmployeeController {
     private final EmployeeService employeeService;
     private final ApprovalService approvalService;
 
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
     @Autowired
     public EmployeeController(EmployeeService employeeService, ApprovalService approvalService) {
         this.employeeService = employeeService;
@@ -59,12 +63,14 @@ public class EmployeeController {
                 null));
     }
 
-    @PostMapping(path = "/employee/{employeeId}/post-description")
-    public ResponseEntity<ResponseDTO> postDescription(@PathVariable String employeeId, @RequestBody SetDescriptionDTO descriptionDTO) throws Exception {
+    @PostMapping(path = "employee/post-description")
+    public ResponseEntity<ResponseDTO> postDescription(HttpServletRequest request, @RequestBody SetDescriptionDTO descriptionDTO) throws Exception {
+        String token = jwtTokenProvider.resolveToken(request);
+        String userId = jwtTokenProvider.getUsername(token);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseDTO.build(true,
                 "Description posted successfully",
                 LocalDateTime.now(),
-                employeeService.postDescription(employeeId, descriptionDTO),
+                employeeService.postDescription(userId, descriptionDTO),
                 null));
     }
 

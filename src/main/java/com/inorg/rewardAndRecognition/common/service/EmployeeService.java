@@ -12,8 +12,8 @@ public interface EmployeeService {
     List<EmployeeDTO> findAllActiveEmployees() throws ResourceNotFoundException;
     EmployeeDTO findActiveEmployeeById(String id) throws ResourceNotFoundException, InvalidRequest;
     EmployeeDTO findActiveEmployeeByEmail(String email) throws ResourceNotFoundException, InvalidRequest;
-    List<EmployeeDTO> putRoles(List<SetRoleDTO> roleDTOs) throws ResourceNotFoundException, InvalidRequest;
-    EmployeeDTO postDescription(String id, SetDescriptionDTO descriptionDTO) throws ResourceNotFoundException, InvalidRequest;
+    List<EmployeeDTO> putRoles(String adminId, List<SetRoleDTO> roleDTOs) throws Exception;
+    EmployeeDTO postDescription(String id, SetDescriptionDTO descriptionDTO) throws Exception;
     List<EmployeeRoleMappingEntity> getEmployeeRoleMapping() throws  Exception;
 
 }

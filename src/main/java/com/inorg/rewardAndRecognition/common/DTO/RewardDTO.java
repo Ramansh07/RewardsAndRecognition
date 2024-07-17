@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RewardDTO {
-    @JsonProperty("userId")
-    private String userId;
 
     @JsonProperty("rewardID")
     private int rewardId;

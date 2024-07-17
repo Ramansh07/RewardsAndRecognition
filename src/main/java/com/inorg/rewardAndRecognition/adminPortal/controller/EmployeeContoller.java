@@ -2,6 +2,8 @@ package com.inorg.rewardAndRecognition.adminPortal.controller;
 import com.inorg.rewardAndRecognition.common.DTO.ResponseDTO;
 import com.inorg.rewardAndRecognition.common.DTO.SetRoleDTO;
 import com.inorg.rewardAndRecognition.common.service.EmployeeService;
+import com.inorg.rewardAndRecognition.config.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +18,17 @@ import java.util.List;
 public class EmployeeContoller {
     @Autowired
     private EmployeeService employeeService;
-    @PostMapping(path = "/employee/{adminId}/change-roles")
-    public ResponseEntity<ResponseDTO> postDescription(@RequestBody List<SetRoleDTO> setRoleDTOs) throws Exception {
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
+    @PostMapping(path = "employee/change-roles")
+    public ResponseEntity<ResponseDTO> postDescription(@RequestBody List<SetRoleDTO> setRoleDTOs, HttpServletRequest request) throws Exception {
+        String token = jwtTokenProvider.resolveToken(request);
+        String adminId = jwtTokenProvider.getUsername(token);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseDTO.build(true,
                 "roles changed successfully",
                 LocalDateTime.now(),
-                employeeService.putRoles(setRoleDTOs),
+                employeeService.putRoles(adminId, setRoleDTOs),
                 null));
     }
     @GetMapping("/employeeRoleMapping")

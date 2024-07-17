@@ -3,6 +3,8 @@ import com.inorg.rewardAndRecognition.adminPortal.DTO.CreateRewardDTO;
 import com.inorg.rewardAndRecognition.common.DTO.ResponseDTO;
 import com.inorg.rewardAndRecognition.common.DTO.RewardDTO;
 import com.inorg.rewardAndRecognition.common.service.RewardService;
+import com.inorg.rewardAndRecognition.config.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,9 @@ public class RewardController {
     private final RewardService rewardService;
 
     @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
     public RewardController(RewardService rewardService) {
         this.rewardService = rewardService;
     }
@@ -29,6 +34,7 @@ public class RewardController {
                 rewardService.getAllRewards(),
                 null));
     }
+
     @GetMapping("/rewardLevels")
     public ResponseEntity<ResponseDTO> getRewardLevels() throws Exception {
         return ResponseEntity.ok(ResponseDTO.build(true,
@@ -38,28 +44,34 @@ public class RewardController {
                 null));
     }
 
-    @PostMapping(path = "/rewards/create-rewards")
-    public ResponseEntity<ResponseDTO> postRewards(@RequestBody List<CreateRewardDTO> rewardDTOs) throws Exception {
+    @PostMapping(path = "rewards/create-rewards")
+    public ResponseEntity<ResponseDTO> postRewards(@RequestBody List<CreateRewardDTO> rewardDTOs, HttpServletRequest request) throws Exception {
+        String token = jwtTokenProvider.resolveToken(request);
+        String adminId = jwtTokenProvider.getUsername(token);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseDTO.build(true,
                 "Rewards created successfully",
                 LocalDateTime.now(),
-                rewardService.createRewards(rewardDTOs),
+                rewardService.createRewards(adminId, rewardDTOs),
                 null));
     }
-    @PutMapping(path = "/rewards/update-rewards")
-    public ResponseEntity<ResponseDTO> updateRewards(@RequestBody List<RewardDTO> rewardDTOs) throws Exception {
+    @PutMapping(path = "rewards/update-rewards")
+    public ResponseEntity<ResponseDTO> updateRewards(@RequestBody List<RewardDTO> rewardDTOs, HttpServletRequest request) throws Exception {
+        String token = jwtTokenProvider.resolveToken(request);
+        String adminId = jwtTokenProvider.getUsername(token);
         return ResponseEntity.ok(ResponseDTO.build(true,
                 "Rewards updated successfully",
                 LocalDateTime.now(),
-                rewardService.updateRewards(rewardDTOs),
+                rewardService.updateRewards(adminId, rewardDTOs),
                 null));
     }
-    @PutMapping(path = "/rewards/delete-rewards/{userId}")
-    public ResponseEntity<ResponseDTO> deleteRewards(@PathVariable String userId, @RequestBody List<Integer> rewardIds) throws Exception {
+    @PutMapping(path = "rewards/delete-rewards")
+    public ResponseEntity<ResponseDTO> deleteRewards(@RequestBody List<Integer> rewardIds, HttpServletRequest request) throws Exception {
+        String token = jwtTokenProvider.resolveToken(request);
+        String adminId = jwtTokenProvider.getUsername(token);
         return ResponseEntity.ok(ResponseDTO.build(true,
-                "Rewards updated successfully",
+                "Rewards deleted successfully",
                 LocalDateTime.now(),
-                rewardService.deleteRewards(rewardIds, userId),
+                rewardService.deleteRewards(rewardIds, adminId),
                 null));
     }
 }

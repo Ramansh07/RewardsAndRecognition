@@ -11,6 +11,6 @@ import lombok.NonNull;
 @AllArgsConstructor(staticName = "build")
 public class SetDescriptionDTO {
     @NonNull
-    @JsonProperty("EmployeeDescription")
+    @JsonProperty("employeeDescription")
     private String description;
 }
