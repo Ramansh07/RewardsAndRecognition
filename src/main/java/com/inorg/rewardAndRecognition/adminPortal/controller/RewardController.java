@@ -4,6 +4,7 @@ import com.inorg.rewardAndRecognition.common.DTO.ResponseDTO;
 import com.inorg.rewardAndRecognition.common.DTO.RewardDTO;
 import com.inorg.rewardAndRecognition.common.service.RewardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
@@ -14,7 +15,6 @@ import java.util.List;
 public class RewardController {
 
     private final RewardService rewardService;
-    int a;
 
     @Autowired
     public RewardController(RewardService rewardService) {
@@ -40,7 +40,7 @@ public class RewardController {
 
     @PostMapping(path = "/rewards/create-rewards")
     public ResponseEntity<ResponseDTO> postRewards(@RequestBody List<CreateRewardDTO> rewardDTOs) throws Exception {
-        return ResponseEntity.ok(ResponseDTO.build(true,
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseDTO.build(true,
                 "Rewards created successfully",
                 LocalDateTime.now(),
                 rewardService.createRewards(rewardDTOs),

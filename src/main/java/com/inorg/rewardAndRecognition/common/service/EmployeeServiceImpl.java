@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
 
-
     private final EmployeeRepository employeeRepository;
 
     @Autowired
@@ -36,7 +35,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
-
 
     @Override
     public List<EmployeeDTO> findAllActiveEmployees() throws ResourceNotFoundException {
