@@ -6,7 +6,6 @@ import com.inorg.rewardAndRecognition.config.exceptions.NoAuthorisationException
 import com.inorg.rewardAndRecognition.common.service.EmployeeService;
 import com.inorg.rewardAndRecognition.common.service.RewardService;
 import com.inorg.rewardAndRecognition.userPortal.dto.NominateDTO;
-import com.inorg.rewardAndRecognition.userPortal.dto.NominatorDTO;
 import com.inorg.rewardAndRecognition.userPortal.dto.NominationRewardDTO;
 import com.inorg.rewardAndRecognition.common.entity.ApprovalEntity;
 import com.inorg.rewardAndRecognition.common.entity.NominationEntity;
@@ -38,12 +37,11 @@ public class NominationService {
     private RewardService rewardService;
 
     @Transactional
-    public List<ApprovalEntity> giveReward(NominateDTO nominateDTO) throws Exception {
+    public List<ApprovalEntity> giveReward(NominateDTO nominateDTO, String nominatorEmail) throws Exception {
+        EmployeeDTO employeeObject = employeeService.findActiveEmployeeByEmail(nominatorEmail);
+        String nominatorId = employeeObject.getEmpId();
         List<ApprovalEntity> savedApprovals = new ArrayList<>();
-        NominatorDTO nominator = nominateDTO.getNominator();
         List<NominationRewardDTO> rewards = nominateDTO.getRewards();
-        String nominatorId  = nominator.getId();
-
         EmployeeDTO nominatorCheck = employeeService.findActiveEmployeeById(nominatorId);
         List<NominationEntity> createdNominations = new ArrayList<>();
         List<ApprovalEntity> createdApprovals = new ArrayList<>();
