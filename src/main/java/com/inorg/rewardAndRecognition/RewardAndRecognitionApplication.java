@@ -9,5 +9,6 @@ public class RewardAndRecognitionApplication {
 		SpringApplication.run(RewardAndRecognitionApplication.class, args);
 		System.out.println("hello world");
 		//hello
+		//devCommit1
 	}
 }
